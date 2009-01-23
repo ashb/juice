@@ -1,0 +1,7 @@
+Juice? JavaScript? WTH?
+
+I've been playing with flusspferd[0], largley on sqlite and curl access.
+
+I want to play with JavaScript on the server, as a web framework. So here it is. It needs polish
+
+[0] http://flusspferd.org
