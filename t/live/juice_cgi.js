@@ -13,7 +13,7 @@ function doneChore(env, task_id) {
 
 }
 
-var juice = require('lib/juice');
+var juice = require('juice');
 
 var app = new juice.Application;
 
