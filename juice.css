@@ -1,0 +1,133 @@
+/* reset */
+
+* { margin: 0; padding: 0; }
+h1, h2, h3, h4, h5, h6 { font-size: 100%; font-weight: inherit; }
+strong, em, code { font-style: inherit; font-weight: inherit; }
+
+/* typography */
+
+body {
+  background: #fff;
+  color: #444;
+  font: 14px/21px "Lucida Grande", "Lucida Sans", "Lucida Sans Unicode", sans-serif;
+}
+
+#header {
+  background: #79d108;
+  color: #fff;
+  font-family: "Gill Sans Light", "GillSans-Light", "Gill Sans", Corbel, sans-serif;
+  font-weight: 300;
+  padding-bottom: 21px;
+}
+
+#content {
+  margin: 0 auto;
+  overflow: hidden;
+  padding: 21px 0;
+  width: 960px;
+}
+
+#features {
+  float: left;
+  padding-left: 20px;
+  width: 440px;
+}
+
+#getting-started,
+#community {
+  clear: right;
+  float: right;
+  padding-right: 20px;
+  width: 440px;
+}
+
+#header h1 {
+  background: url(logo.png) no-repeat 0 12px;
+  color: #000;
+  font-size: 48px;
+  line-height: 63px;
+  margin: 0 auto;
+  padding-left: 45px;
+  text-shadow: 1px 1px #a6f540;
+  text-transform: lowercase;
+  width: 875px;
+}
+
+#header h1 em {
+  font-family: "Gill Sans", Corbel, sans-serif;
+  font-weight: normal;
+}
+
+#header p {
+  font-size: 24px;
+  line-height: 30.5px;
+  margin: 0 auto;
+  width: 920px;
+}
+
+h2 {
+  color: #ffc612;
+  font-size: 24px;
+  font-weight: bold;
+  line-height: 32px;
+  padding-bottom: 10px;
+}
+
+code {
+  background: #fff9db;
+  color: #74963b;
+  font-family: Monaco, Consolas, monospace;
+  white-space: nowrap;
+}
+
+a {
+  color: #18d;
+}
+
+a:hover {
+  background: #18d;
+  color: #fff;
+  text-decoration: none;
+}
+
+#features ul {
+  color: #ffc612;
+}
+
+#features li {
+  margin-bottom: 21px;
+}
+
+h3 {
+  color: #000;
+  font-weight: bold;
+}
+
+#features h3 em {
+  background: #ffc612;
+  color: #fff;
+  padding: 0 2px;
+}
+
+#features li p {
+  color: #444;
+}
+
+#getting-started ol,
+#getting-started p {
+  margin-bottom: 21px;
+}
+
+#getting-started ol {
+  color: #ffc612;
+  list-style-type: disc;
+}
+
+#getting-started ol span {
+  color: #444;
+}
+
+dt {
+  float: left;
+  margin-right: 7px;
+}
