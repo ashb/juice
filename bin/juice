@@ -28,43 +28,66 @@ var JuiceCLI = {
 var juice = require('juice');
 var app = new juice.Application;
 
+var DOC_ROOT = module.uri.replace(/^.*?:\/\/(.*?)lib\/]]></> + name + <><![CDATA[\.js$/, "$1") || "./";
+
 // Your actions (well, just one action for now)
-app.controllers.index = {
+app.controllers.index = function( env ) {
   return {
     docroot : env.juice.docRoot
   }
 }
 
+app.controllers.test_x = function() {
+  return {
+    status: 200,
+    headers: {
+      'x-sendfile': DOC_ROOT + "static" + this.env.pathInfo
+    },
+    body: [ '' ]
+  }
+}
+
 // URL mappings
 app.actions = {
-  "/" : "index"
+  "/" : "index",
+  "/(?:styles|scripts)/.*?": { action: "test_x", raw: true }
 };
 
 // Don't mess with this, either
-juice.run(app);
+exports.app = app.setup( DOC_ROOT );
 ]]></> + "";
-    io.File( name + "/lib/app.js", "w" ).print( lib_app_js );
+    io.File( name + "/lib/" + name + ".js", "w" ).print( lib_app_js );
 
     // templates/index.tt
     var templates_index_tt = <><![CDATA[<!DOCTYPE html>
 <html>
 <head>
   <title>Welcome to Juice</title>
+  <link rel="stylesheet" type="text/css" href="/styles/app.css">
 </head>
 <body>
   <h1>Welcome to Juice</h1>
-  <p>To get started open up <code>[% docroot %]lib/app.js</code> in your
+  <p>To get started open up <code>[% docroot %]lib/]]></> + name + <><![CDATA[.js</code> in your
   favourite editor and start poking around.</p>
 </body>
 </html>]]></> + "";
     io.File( name + "/templates/index.tt", "w" ).print( templates_index_tt );
-  }
-}
 
-var options = {
-  "init" : {
-    "alias" : [ "abc", "d" ],
-    "argument" : "required"
+    // static/styles/app.css
+    var static_styles_app_css = <><![CDATA[* { margin: 0; padding: 0; }]]></> + "";
+    io.File( name + "/static/styles/app.css", "w" ).print( static_styles_app_css );
+
+    // script/server
+    var script_server = <><![CDATA[#!/usr/bin/env flusspferd -I lib
+
+var server = require( 'zest' ).Zest( {
+  handler: require( ']]></> + name + <><![CDATA[' ).app
+} );
+
+server.start();
+]]></> + "";
+    io.File.create( name + "/script/server", 0777 );
+    io.File( name + "/script/server", "w" ).print( script_server );
   }
 }
 
