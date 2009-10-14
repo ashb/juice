@@ -1,24 +1,14 @@
-
-function doneChore(env, task_id) {
-  return [
-    200,
-    {contentType: 'text/html'},
-    function() {
-      yield "<b>Hi!</b>";
-      yield "<pre>Script url args are " + env.PATH_INFO + "</pre>";
-      yield "<pre>This script is rooted at " + env.SCRIPT_NAME + "</pre>";
-      yield "<h2>Title \u2603</h2>";
-    }
-  ];
-
-}
-
 var juice = require('juice');
-
 var app = new juice.Application;
 
-app.actions = {
-  "/done/(\\d+)": doneChore
-};
+app.controllers.index = function() {
+  return {
+    status: 200,
+    headers: {},
+    body: ["Hello Juicers!"]
+  }
+}
+app.actions = { "/?" : { action: "index", raw: true } };
+exports.app = app.setup();
 
-juice.run(app);
+require('juice/engine/cgi').run(exports.app);
