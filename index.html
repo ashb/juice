@@ -47,12 +47,42 @@
     <div id="getting-started">
       <h2>Getting started</h2>
 
-      <p>The easy way is to wait a couple of weeks until we've sorted out
-      packaging up binaries. The hard way is to install several things, some
-      from source. If you're that desperate, come ask us for help in IRC.</p>
+      <div id="mac-os-x">
+        <h3>For <em>Mac OS X</em> (10.5+)</h3>
 
-      <p>Juice is an open source project under the
-      <a href="http://en.wikipedia.org/wiki/MIT_License">MIT license</a>.</p>
+        <ol>
+          <li><span>Download and install <a href="#">Juice 0.1 (2.1MB dmg)</a></span></li>
+          <li><span>Open Terminal and create a project: <code>juice init helloworld</code></span></li>
+          <li><span>Start the server: <code>./helloworld/script/server</code></span></li>
+          <li><span>Visit your app: <code>open http://localhost:9090/</code></span></li>
+        </ol>
+
+        <p>If you're a <a href="http://github.com/mxcl/homebrew">homebrew</a>
+        user you can install using <code>brew install juice</code> instead of
+        step 1 above.</p>
+      </div>
+
+      <div id="windows">
+        <h3>For <em>Windows</em> (XP or newer)</h3>
+
+        <ol>
+          <li><span>Download and install <a href="#">Juice 0.1 (3.4MB msi)</a></span></li>
+          <li><span>Open a command prompt and create a project: <code>juice init helloworld</code></span></li>
+          <li><span>Start the server: <code>helloworld\script\server.bat</code></span></li>
+          <li><span>Visit your app at http://localhost:9090/</span></li>
+        </ol>
+      </div>
+
+      <div id="linux">
+        <h3>For <em>Linux</em> (TODO)</h3>
+
+        <ol>
+          <li><span><a href="http://flusspferd.org/docs/install.html">Install Flusspferd from source</a></span></li>
+          <li><span>Install Juice: <code>flusspferd --install-module juice</code></span></li>
+          <li><span>Start the server: <code>./helloworld/script/server</code></span></li>
+          <li><span>Visit your app at http://localhost:9090/</span></li>
+        </ol>
+      </div>
     </div>
 
     <div id="community">
@@ -66,5 +96,8 @@
       </dl>
     </div>
   </div>
+
+  <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js"></script>
+  <script type="text/javascript" src="juice.js"></script>
 </body>
 </html>
