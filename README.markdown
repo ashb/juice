@@ -22,9 +22,12 @@ with Juice:
 There's more to it than this obviously -- a getting started guide will be
 available with version 0.1 which is due for release on 20th Oct. 2009.
 
-Juice is currently known to run on Flusspferd[1], and should run on other
+Juice is currently known to run on Flusspferd[2], and should run on other
 CommonJS platforms in the future -- it just hasn't been tested yet.
 
-[0] http://wiki.commonjs.org/wiki/JSGI/Level0/A
-[1] http://www.github.com/ashb/Zest
-[1] http://flusspferd.org
+As for running it - well it ship with its own development server (which is
+performs surprisingly well) and version 0.2 will have FastCGI support.
+
+[0]: http://wiki.commonjs.org/wiki/JSGI/Level0/A
+[1]: http://www.github.com/ashb/Zest
+[2]: http://flusspferd.org
