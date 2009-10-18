@@ -1,0 +1,7 @@
+*.dmg
+/Juice/build
+/bin
+/etc
+/lib
+/share
+/include
