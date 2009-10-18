@@ -63,7 +63,12 @@ if [ -n "$js" ]; then
   cp -R $js/lib/libmozjs.$so "$dest/lib"
 fi
 
-echo Build the dmg with:
+echo Building Juice.mpkg...
 juice_ver=0.1
-echo "hdiutil create -fs HFS+ -srcfolder Juice/build/ -volname \"Juice $juice_ver\" Juice-$juice_ver.dmg"
-echo once the .mpkg is built
+freeze Juice/Juice.packproj
+
+echo Building Juice-0.1.dmg...
+hdiutil create -fs HFS+ -srcfolder Juice/build/ -volname "Juice $juice_ver" Juice-$juice_ver.dmg \
+  && sudo rm -r Juice/build
+echo done!
+
