@@ -1,4 +1,6 @@
 #!/usr/bin/env flusspferd
+// -*- mode:javascript; -*- vim:ts=2:sw=2:expandtab:autoindent:filetype=javascript:enc=utf-8:
+ 
 
 var io = require( "io" ),
     system = require( "system" ),
