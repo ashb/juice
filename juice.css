@@ -27,15 +27,19 @@ body {
   width: 960px;
 }
 
-#features {
+#why, #learn {
   float: left;
   padding-left: 20px;
   width: 440px;
 }
 
-#getting-started,
-#community {
-  clear: right;
+#installation {
+  clear: both;
+  padding: 0 20px;
+}
+
+#why-not,
+#contribute {
   float: right;
   padding-right: 20px;
   width: 440px;
@@ -90,11 +94,11 @@ a:hover {
   text-decoration: none;
 }
 
-#features ul {
+#content ul {
   color: #ffc612;
 }
 
-#features li {
+#why li, #why-not li {
   margin-bottom: 21px;
 }
 
@@ -103,27 +107,27 @@ h3 {
   font-weight: bold;
 }
 
-#features h3 em {
+#content h3 em {
   background: #ffc612;
   color: #fff;
   padding: 0 2px;
 }
 
-#features li p {
+#content li p {
   color: #444;
 }
 
-#getting-started ol,
-#getting-started p {
+#installation ol,
+#installation p {
   margin-bottom: 21px;
 }
 
-#getting-started ol {
+#installation ol {
   color: #ffc612;
   list-style-type: disc;
 }
 
-#getting-started ol span {
+#installation ol span {
   color: #444;
 }
 

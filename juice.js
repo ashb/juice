@@ -5,18 +5,18 @@ $( function() {
   if ( navigator.platform.indexOf( 'Linux' ) != -1 ) $( '#linux' ).addClass( 'detected' );
 
   // hide everything but the detected OS, if one was found
-  $( '#getting-started .detected' ).each( function() {
+  $( '#installation .detected' ).each( function() {
     var oses = [];
 
     // build links to reveal each of the OS blocks
-    $( '#getting-started div' ).each( function() {
+    $( '#installation div' ).each( function() {
       ( function( os ) {
         var link = $( '<a>' )
           .text( $( 'h3 em', os ).text() )
           .attr( 'href', '#' + os.id )
           .click( function( e ) {
             e.preventDefault();
-            $( '#getting-started div' ).hide();
+            $( '#installation div' ).hide();
             $( os ).show();
           } );
         oses.push( link );
@@ -33,6 +33,6 @@ $( function() {
       .append( ' or ' )
       .append( oses[ 2 ] )
       .append( '?' )
-      .appendTo( '#getting-started' );
+      .appendTo( '#installation' );
   } );
 } );
