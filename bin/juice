@@ -4,7 +4,7 @@
 
 var io = require( "io" ),
     system = require( "system" ),
-    os = require( "os" );
+    fs = require( "filesystem-base" );
 
 var JuiceCLI = {
   init : function ( name ) {
@@ -12,18 +12,29 @@ var JuiceCLI = {
     if ( name === undefined ) throw "Usage: juice init my-new-project";
 
     // if directory already exists, exit
-    if ( io.File.exists( name ) ) throw "Directory " + name + " already exists";
+    if ( fs.exists( name ) ) throw "Directory " + name + " already exists";
 
+    // fs-base doesn't have this yet.
+    function makeTree(dir) {
+      return fs.canonical(dir)
+        .split('/')
+        .reduce(function(accum, dir) {
+          accum += '/' + dir;
+          if (!fs.exists(accum)) fs.makeDirectory(accum);
+          return accum
+        });
+    }
+
+    var dir = makeTree(name);
     // create the directory structure
     var tree = [
-      name + "/db",
-      name + "/lib",
-      name + "/script",
-      name + "/static/scripts",
-      name + "/static/styles",
-      name + "/templates"
-    ];
-    os.system( "mkdir -p " + tree.join( " " ) );
+      dir + "/db",
+      dir + "/lib",
+      dir + "/script",
+      dir + "/static/scripts",
+      dir + "/static/styles",
+      dir + "/templates"
+    ].map(makeTree);
 
     // lib/app.js
     var lib_app_js = <><![CDATA[// Don't mess with this
@@ -58,7 +69,7 @@ app.actions = {
 // Don't mess with this, either
 exports.app = app.setup( DOC_ROOT );
 ]]></> + "";
-    io.File( name + "/lib/" + name + ".js", "w" ).print( lib_app_js );
+    fs.rawOpen( dir + "/lib/" + name + ".js", "w" ).print( lib_app_js );
 
     // templates/index.tt
     var templates_index_tt = <><![CDATA[<!DOCTYPE html>
@@ -88,9 +99,11 @@ var server = require( 'zest' ).Zest( {
 
 server.start();
 ]]></> + "";
-    io.File.create( name + "/script/server", 0777 );
-    io.File( name + "/script/server", "w" ).print( script_server );
-  }
+    io.File.create( dir + "/script/server", 0777 );
+    fs.rawOpen( dir + "/script/server", "w" ).print( script_server );
+
+    print("Created juice", name, "app in", dir);
+  } // end of init
 }
 
 var args = system.args.slice( 1 );
