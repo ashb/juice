@@ -20,7 +20,7 @@ with Juice:
     exports.app = app.setup();
 
 There's more to it than this obviously -- a getting started guide will be
-available with version 0.1 which is due for release on 20th Oct. 2009.
+available with version 0.1 which is due for release on 20th Oct. 2009. Edit: The code is mostly ready -- we're just holding off to test things a bit better and to finalize the design of the website.
 
 Juice is currently known to run on [Flusspferd], and should run on other
 CommonJS platforms in the future -- it just hasn't been tested yet.
