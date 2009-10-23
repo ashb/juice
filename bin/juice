@@ -44,9 +44,9 @@ var app = new juice.Application;
 var DOC_ROOT = module.uri.replace(/^.*?:\/\/(.*?)lib\/]]></> + name + <><![CDATA[\.js$/, "$1") || "./";
 
 // Your actions (well, just one action for now)
-app.controllers.index = function( env ) {
+app.controllers.index = function( ) {
   return {
-    docroot : env.juice.docRoot
+    docroot : this.docRoot
   }
 }
 
@@ -54,7 +54,7 @@ app.controllers.test_x = function() {
   return {
     status: 200,
     headers: {
-      'x-sendfile': DOC_ROOT + "static" + this.env.pathInfo
+      'x-sendfile': DOC_ROOT + "static" + this.request.pathInfo
     },
     body: [ '' ]
   }
