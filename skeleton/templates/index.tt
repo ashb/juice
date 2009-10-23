@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Welcome to Juice</title>
+  <link rel="stylesheet" type="text/css" href="/styles/app.css">
+</head>
+<body>
+  <h1>Welcome to Juice</h1>
+  <p>To get started open up <code>[% docroot %]lib/skeleton.js</code> in your
+  favourite editor and start poking around.</p>
+</body>
+</html>

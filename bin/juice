@@ -1,10 +1,10 @@
 #!/usr/bin/env flusspferd
-// -*- mode:javascript; -*- vim:ts=2:sw=2:expandtab:autoindent:filetype=javascript:enc=utf-8:
- 
+// -*- mode:javascript; -*- vim:filetype=javascript:
+// Autogenerted - do not edit
 
 var io = require( "io" ),
     system = require( "system" ),
-    fs = require( "filesystem-base" );
+    fs = require( "fs-base" );
 
 var JuiceCLI = {
   init : function ( name ) {
@@ -25,7 +25,7 @@ var JuiceCLI = {
         });
     }
 
-    var dir = makeTree(name);
+    var dir = fs.canonical(makeTree(name));
     // create the directory structure
     var tree = [
       dir + "/db",
@@ -36,12 +36,16 @@ var JuiceCLI = {
       dir + "/templates"
     ].map(makeTree);
 
+    io.File.create( dir + "script/server", 0777 );
+
+
     // lib/app.js
-    var lib_app_js = <><![CDATA[// Don't mess with this
-var juice = require('juice');
+    fs.rawOpen( dir + "lib/app.js", "w").print(<><![CDATA[// Don't mess these first few lines
+const juice = require('juice'),
+      DOC_ROOT = module.uri.replace(/^.*?:\/\/(.*?)lib\/app\.js$/, "$1") || "./";
+
 var app = new juice.Application;
 
-var DOC_ROOT = module.uri.replace(/^.*?:\/\/(.*?)lib\/]]></> + name + <><![CDATA[\.js$/, "$1") || "./";
 
 // Your actions (well, just one action for now)
 app.controllers.index = function( ) {
@@ -50,29 +54,21 @@ app.controllers.index = function( ) {
   }
 }
 
-app.controllers.test_x = function() {
-  return {
-    status: 200,
-    headers: {
-      'x-sendfile': DOC_ROOT + "static" + this.request.pathInfo
-    },
-    body: [ '' ]
-  }
-}
-
 // URL mappings
-app.actions = {
-  "/" : "index",
-  "/(?:styles|scripts)/.*?": { action: "test_x", raw: true }
+app.urls = {
+  "/?" : "index",
+
+  "/styles": { static: "./static/styles" },
+  "/scripts": { static: "./static/scripts" }
 };
 
 // Don't mess with this, either
 exports.app = app.setup( DOC_ROOT );
-]]></> + "";
-    fs.rawOpen( dir + "/lib/" + name + ".js", "w" ).print( lib_app_js );
+
+]]></> + "");
 
     // templates/index.tt
-    var templates_index_tt = <><![CDATA[<!DOCTYPE html>
+    fs.rawOpen( dir + "templates/index.tt", "w").print(<><![CDATA[<!DOCTYPE html>
 <html>
 <head>
   <title>Welcome to Juice</title>
@@ -83,24 +79,33 @@ exports.app = app.setup( DOC_ROOT );
   <p>To get started open up <code>[% docroot %]lib/]]></> + name + <><![CDATA[.js</code> in your
   favourite editor and start poking around.</p>
 </body>
-</html>]]></> + "";
-    io.File( name + "/templates/index.tt", "w" ).print( templates_index_tt );
+</html>
+]]></> + "");
 
     // static/styles/app.css
-    var static_styles_app_css = <><![CDATA[* { margin: 0; padding: 0; }]]></> + "";
-    io.File( name + "/static/styles/app.css", "w" ).print( static_styles_app_css );
+    fs.rawOpen( dir + "static/styles/app.css", "w").print(<><![CDATA[* { margin: 0; padding: 0; }
+]]></> + "");
 
     // script/server
-    var script_server = <><![CDATA[#!/usr/bin/env flusspferd -I lib
+    fs.rawOpen( dir + "script/server", "w").print(<><![CDATA[#!/usr/bin/env flusspferd
+// -*- mode:javascript; -*- vim:filetype=javascript:enc=utf-8:
+
+const system = require('system').args;
+var app;
+
+if (false /* reload */) {
+}
+else {
+  app = require( '../lib/app' ).app
+}
 
 var server = require( 'zest' ).Zest( {
-  handler: require( ']]></> + name + <><![CDATA[' ).app
+  handler: app
 } );
 
 server.start();
-]]></> + "";
-    io.File.create( dir + "/script/server", 0777 );
-    fs.rawOpen( dir + "/script/server", "w" ).print( script_server );
+
+]]></> + "");
 
     print("Created juice", name, "app in", dir);
   } // end of init
@@ -113,3 +118,4 @@ if ( action in JuiceCLI )
   JuiceCLI[ action ].apply( undefined, args );
 else
   throw "Valid actions: init";
+

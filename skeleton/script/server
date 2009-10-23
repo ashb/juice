@@ -1,0 +1,18 @@
+#!/usr/bin/env flusspferd
+// -*- mode:javascript; -*- vim:filetype=javascript:enc=utf-8:
+
+const system = require('system').args;
+var app;
+
+if (false /* reload */) {
+}
+else {
+  app = require( '../lib/app' ).app
+}
+
+var server = require( 'zest' ).Zest( {
+  handler: app
+} );
+
+server.start();
+
