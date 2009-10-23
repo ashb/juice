@@ -90,12 +90,23 @@ exports.app = app.setup( DOC_ROOT );
     fs.rawOpen( dir + "script/server", "w").print(<><![CDATA[#!/usr/bin/env flusspferd
 // -*- mode:javascript; -*- vim:filetype=javascript:enc=utf-8:
 
-const system = require('system').args;
-var app;
+var args = require('system').args;
+var app, baseModules;
 
-if (false /* reload */) {
+if (args[1] != '--no-reload') {
+  print("Running ]]></> + name + <><![CDATA[ in reloader mode...");
+  app = function(request) {
+    // Flusspferd specific - unload modules on request
+    for (i in require.module_cache) {
+      delete require.module_cache[i];
+    }
+    gc();
+
+    return require('../lib/app').app(request);
+  }
 }
 else {
+  print("Running ]]></> + name + <><![CDATA[ normal mode...");
   app = require( '../lib/app' ).app
 }
 
