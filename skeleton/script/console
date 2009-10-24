@@ -1,0 +1,14 @@
+#!/usr/bin/env flusspferd --interactive
+// -*- mode:javascript; -*- vim:filetype=javascript:enc=utf-8:
+
+var get, post
+
+// Hide the details
+(function() {
+  var app = require('../lib/app').app,
+      test = require('juice/test').test(app);
+
+  get = test.get;
+  post = test.post;
+})()
+

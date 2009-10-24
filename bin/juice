@@ -36,8 +36,6 @@ var JuiceCLI = {
       dir + "/templates"
     ].map(makeTree);
 
-    io.File.create( dir + "script/server", 0777 );
-
 
     // lib/app.js
     fs.rawOpen( dir + "lib/app.js", "w").print(<><![CDATA[// Don't mess these first few lines
@@ -85,6 +83,8 @@ exports.app = app.setup( DOC_ROOT );
     // static/styles/app.css
     fs.rawOpen( dir + "static/styles/app.css", "w").print(<><![CDATA[* { margin: 0; padding: 0; }
 ]]></> + "");
+    io.File.create( dir + "script/server", 0777 );
+
 
     // script/server
     fs.rawOpen( dir + "script/server", "w").print(<><![CDATA[#!/usr/bin/env flusspferd
@@ -115,6 +115,25 @@ var server = require( 'zest' ).Zest( {
 } );
 
 server.start();
+
+]]></> + "");
+    io.File.create( dir + "script/console", 0777 );
+
+
+    // script/console
+    fs.rawOpen( dir + "script/console", "w").print(<><![CDATA[#!/usr/bin/env flusspferd --interactive
+// -*- mode:javascript; -*- vim:filetype=javascript:enc=utf-8:
+
+var get, post
+
+// Hide the details
+(function() {
+  var app = require('../lib/app').app,
+      test = require('juice/test').test(app);
+
+  get = test.get;
+  post = test.post;
+})()
 
 ]]></> + "");
 
