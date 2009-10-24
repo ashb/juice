@@ -2,9 +2,17 @@
 // -*- mode:javascript; -*- vim:filetype=javascript:enc=utf-8:
 
 const fs = require('fs-base'),
-      sys = require('system');
+      sys = require('system'),
+      io = require('io'),
+      installer = require('juice/installer');
 
-var fh = fs.rawOpen('bin/juice', 'w');
+// Availavle as a function so we can run it as part of the install script
+exports.makeScript = function () {
+
+var path = installer.dirName(module.id);
+
+io.File.create( path + '../bin/juice', 0777);
+var fh = fs.rawOpen( path + '../bin/juice', 'w');
 
 fh.write(<><![CDATA[#!/usr/bin/env flusspferd
 // -*- mode:javascript; -*- vim:filetype=javascript:
@@ -64,7 +72,7 @@ for (let [,f] in Iterator(files)) {
 
   fh.write('\n    // ' + f + '\n'+ 
            '    fs.rawOpen( dir + "' + f + '", "w").print(<><![CDATA[' +
-            fs.rawOpen('skeleton/' + f, 'r')
+            fs.rawOpen(path + f, 'r')
               .read()
               .replace(/skeleton/g, ']]></> + name + <><![CDATA[') +
             ']]></> + "");\n'
@@ -86,3 +94,8 @@ if ( action in JuiceCLI )
 else
   throw "Valid actions: init";
 ]]></> + "");
+
+}
+
+if (require.main === module)
+  exports.makeScript();
