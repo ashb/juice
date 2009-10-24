@@ -50,14 +50,18 @@ var files = [
   'lib/app.js', 
   'templates/index.tt', 
   'static/styles/app.css', 
-  'script/server'
+  'script/server',
+  'script/console'
 ];
 
-// since our fs-base doesn't yet support permissions, we need to use io.File to
-// make it executable first
-fh.write('    io.File.create( dir + "script/server", 0777 );\n\n');
-
 for (let [,f] in Iterator(files)) {
+  if (f.match("^script/")) {
+    // since our fs-base doesn't yet support permissions, we need to use io.File to
+    // make it executable first
+    fh.write('    io.File.create( dir + "' + f + '", 0777 );\n\n');
+
+  }
+
   fh.write('\n    // ' + f + '\n'+ 
            '    fs.rawOpen( dir + "' + f + '", "w").print(<><![CDATA[' +
             fs.rawOpen('skeleton/' + f, 'r')
