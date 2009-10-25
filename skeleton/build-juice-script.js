@@ -27,6 +27,8 @@ var JuiceCLI = {
     // if name wasn't provided, exit
     if ( name === undefined ) throw "Usage: juice init my-new-project";
 
+    if ( ! name.match( /^[-a-z0-9_]+$/i ) ) throw "Project name must consist of letters, numbers, hyphens and underscores";
+
     // if directory already exists, exit
     if ( fs.exists( name ) ) throw "Directory " + name + " already exists";
 
