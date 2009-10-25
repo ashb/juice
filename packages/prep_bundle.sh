@@ -150,7 +150,20 @@ done
 
 echo -e "\nSanity check\n"
 
-DYLD_LIBRARY_PATH= DYLD_PRINT_LIBRARIES=1 bin/flusspferd -Msqlite3 -Mzest -e1 2>&1 | grep -v ' /System' | grep -v ' /usr/lib/'
+# List of modules that Juice uses. Here until we end up with a proper way of
+# specifying deps
+
+output=$(
+    DYLD_LIBRARY_PATH= DYLD_PRINT_LIBRARIES=1 \
+    bin/flusspferd \
+    -Msqlite3 \
+    -Mzest \
+    -MTemplate \
+    -MJuice \
+    -Mhttp-fetch \
+    -e1 2>&1) || { echo $output | grep -v 'dyld: loaded:'; exit 1; }
+
+echo "$output" | grep 'dyld: loaded:' | grep -v ' /System' | grep -v ' /usr/lib/'
 DYLD_LIBRARY_PATH= bin/flusspferd -v
 
 [ $make_bundle -eq 0 ] && exit 0
