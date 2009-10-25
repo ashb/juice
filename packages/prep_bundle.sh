@@ -1,11 +1,62 @@
 #!/bin/bash
 
-# Array of libs copied
-declare -a copied
+set -e
+
+declare -a copied # Array of libs copied
+declare -a to_install # Array of modules to install
+
+make_bundle=1
+while [ $# -gt 0 ]; do
+  case "$1" in
+    --no-bundle)
+      make_bundle=0
+      shift
+      ;;
+    -s)
+      js=$2
+      [ $# -ge 2 ] || { echo missing argument after -s 1>&2; exit 1; }
+      shift 2;
+      ;;
+    --spidermonkey=*)
+      js=${1#--spidermonkey=}
+      shift
+      ;;
+    -d)
+      dest=$2
+      [ $# -ge 2 ] || { echo missing argument after -d 1>&2; exit 1; }
+      shift 2;
+      ;;
+    --dest=*)
+      dest=${1#--dest=}
+      shift
+      ;;
+    -*)
+      echo unknown argument $1 1>&2;
+      exit 2;
+      ;;
+    *)
+      # All remaining args are either dirs or paths to install.js
+      while [ $# -gt 0 ]; do
+        case "$1" in
+          */install.js|install.js)
+            [ -f "$1" ] || { echo "$1 not found" 1>&2; exit 1; }
+            to_install[${#to_install[@]}]="$1"
+            shift
+            ;;
+          *)
+            1="$1/install.js"
+            ;;
+        esac
+      done
+  esac
+done
+
+[ -n "$dest" ] || { echo No dest option provided! 1>&2; exit 1; }
+[ -n "$js" ] || { echo No spidermonkey option provided! 1>&2; exit 1; }
+[ -f "$js/lib/libmozjs.dylib" ] || { echo "Can't find libmozjs.dylib under $js/lib" 1>&2; exit 1; }
 
 function already_copied()
 {
-
   if [ -z "$1" ]; then
     return 0
   fi
@@ -24,7 +75,7 @@ function pull_in_libs() {
   local file=$1;
   local lines=${2:-1,2}
 
-  echo "Pulling in deps for '$file'"
+  #echo "Pulling in deps for '$file'"
   #echo "stripping $lines lines from otool -L $file"
   #echo "otool -L \"$file\"  | sed \"${lines}d\" | awk '/\/usr\/lib\// {next} {print \$1}'"
   #echo "$(otool -L "$file"  | sed "${lines}d" | awk '/\/usr\/lib\// {next} {print $1}')"
@@ -52,7 +103,6 @@ function pull_in_libs() {
 }
 
 so="dylib"
-dest="$1"
 
 # Output dirs
 mkdir -p "$dest/bin" "$dest/lib/flusspferd" "$dest/etc/flusspferd" \
@@ -77,6 +127,9 @@ module_dir="$dest/lib/flusspferd/modules"
 pull_in_libs "$our_bin" 1
 pull_in_libs "$our_lib"
 
+cp -R $js/include/js "$dest/include"
+cp -R $js/lib/libmozjs.$so "$dest/lib"
+
 # Fix up links for lib/libflusspferd.dylib
 install_name_tool \
   -change @executable_path/libmozjs.dylib \
@@ -84,30 +137,13 @@ install_name_tool \
           "$our_lib"
 
 
-# Zest
-if [ -n "$zest" ]; then
-  cp "$zest/build/libzest.$so" "$module_dir"
-fi
-
-# Juice
-if [ -n "$juice" ]; then
-  cp -R "$juice/lib/" "$module_dir"
-  cp -R "$juice/bin/" "$dest/bin"
-fi
-
-
-if [ -n "$template" ]; then
-  cp -R "$template/lib/" "$dest/lib/flusspferd/modules"
-fi
-
-
-if [ -n "$js" ]; then
-  cp -R $js/include/js "$dest/include"
-  cp -R $js/lib/libmozjs.$so "$dest/lib"
-fi
+for i in ${to_install[@]}; do
+  "$our_bin" "$i"
+done
 
 find "$dest" -name .\*.sw[op] -print0 | xargs -0 rm
-  
+ 
+# We're still building some libs wrong it seems.
 for file in $(find "$module_dir" -name \*.dylib); do
   pull_in_libs "$file"
 done
@@ -117,13 +153,14 @@ echo -e "\nSanity check\n"
 DYLD_LIBRARY_PATH= DYLD_PRINT_LIBRARIES=1 bin/flusspferd -Msqlite3 -Mzest -e1 2>&1 | grep -v ' /System' | grep -v ' /usr/lib/'
 DYLD_LIBRARY_PATH= bin/flusspferd -v
 
+[ $make_bundle -eq 0 ] && exit 0
 
 echo Building Juice.mpkg...
 juice_ver=0.1
 freeze Juice/Juice.packproj
 
 echo Building Juice-$juice_ver.dmg...
-rm Juice-$juice_ver.dmg
+[ -e Juice-$juice_ver.dmg ] && rm Juice-$juice_ver.dmg
 hdiutil create -fs HFS+ -srcfolder Juice/build/ -volname "Juice $juice_ver" Juice-$juice_ver.dmg \
   && sudo rm -r Juice/build
 echo done!
