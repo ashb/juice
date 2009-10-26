@@ -6,7 +6,10 @@
 </head>
 <body>
   <h1>Welcome to Juice</h1>
-  <p>To get started open up <code>[% docroot %]lib/skeleton.js</code> in your
+  <p>To get started open up <code>[% docroot %]lib/app.js</code> in your
   favourite editor and start poking around.</p>
+  <p>You might want to read the
+  <a href="http://juicejs.org/guides/getting-started">getting started guide</a>
+  to walk you through a basic app.</p>
 </body>
 </html>
