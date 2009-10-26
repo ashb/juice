@@ -20,7 +20,8 @@ fh.write(<><![CDATA[#!/usr/bin/env flusspferd
 
 var io = require( "io" ),
     system = require( "system" ),
-    fs = require( "fs-base" );
+    fs = require( "fs-base" ),
+    installer = require( "juice/installer");
 
 var JuiceCLI = {
   init : function ( name ) {
@@ -32,18 +33,7 @@ var JuiceCLI = {
     // if directory already exists, exit
     if ( fs.exists( name ) ) throw "Directory " + name + " already exists";
 
-    // fs-base doesn't have this yet.
-    function makeTree(dir) {
-      return fs.canonical(dir)
-        .split('/')
-        .reduce(function(accum, dir) {
-          accum += '/' + dir;
-          if (!fs.exists(accum)) fs.makeDirectory(accum);
-          return accum
-        });
-    }
-
-    var dir = fs.canonical(makeTree(name));
+    var dir = fs.canonical(installer.makeTree(name));
     // create the directory structure
     var tree = [
       dir + "/db",
@@ -52,7 +42,7 @@ var JuiceCLI = {
       dir + "/static/scripts",
       dir + "/static/styles",
       dir + "/templates"
-    ].map(makeTree);
+    ].map(installer.makeTree);
 
 ]]></> + "");
 
@@ -64,11 +54,13 @@ var files = [
   'script/console'
 ];
 
-for (let [,f] in Iterator(files)) {
+for each (f in files) {
   if (f.match("^script/")) {
     // since our fs-base doesn't yet support permissions, we need to use io.File to
     // make it executable first
-    fh.write('    io.File.create( dir + "' + f + '", 0777 );\n\n');
+    fh.write('    io.File.create( dir + "' + f + '", 0777 );\n')
+    fh.write('    if (installer.batchFilesNeeded)\n' + 
+             '      fs.rawOpen(dir + "' + f + '.bat", "w").print(installer.batchFile);\n\n');
 
   }
 
