@@ -44,7 +44,10 @@ while [ $# -gt 0 ]; do
             shift
             ;;
           *)
-            1="$1/install.js"
+            i="$1/install.js"
+            [ -f "$i" ] || { echo "$i not found" 1>&2; exit 1; }
+            to_install[${#to_install[@]}]="$i"
+            shift
             ;;
         esac
       done
@@ -92,9 +95,9 @@ function pull_in_libs() {
         cp -R "$lib" "$dest/lib/$libfile"
       fi
 
+      install_name_tool -change "$lib" "$bin_to_lib/$libfile" "$file"
       if ! already_copied "$libfile" && [ -e "$dest/lib/$libfile" ]; then
         #echo install_name_tool -change "$lib" "$bin_to_lib/$libfile" "$file"
-        install_name_tool -change "$lib" "$bin_to_lib/$libfile" "$file"
         copied[${#copied[@]}]="$libfile"
         pull_in_libs "$dest/lib/$libfile"
       fi
