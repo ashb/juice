@@ -42,8 +42,8 @@ exports.test_Trim = function () {
 // Should this handle anything more than strings and numbers?
 exports.test_NotEmpty = function() {
   var v = Validation.prototype.validators;
-  asserts.same( v.notEmpty( undefined ), undefined, "|undefined| should fail" );
-  asserts.same( v.notEmpty( "" ), undefined, "Empty string should fail" );
+  asserts.throws( function() { v.notEmpty( undefined ); }, "|undefined| should fail" );
+  asserts.throws( function() { v.notEmpty( "" ); }, "Empty string should fail" );
   asserts.same( v.notEmpty( "foo" ), "foo", "Non-empty strings should return a string" );
   asserts.same( v.notEmpty( 123 ), 123, "Integers should be unchanged" );
   asserts.same( v.notEmpty( 123.456 ), 123.456, "Floats should be unchanged" );
@@ -51,33 +51,37 @@ exports.test_NotEmpty = function() {
 
 exports.test_Integer = function () {
   var v = Validation.prototype.validators;
-  asserts.same( v.integer( undefined ), undefined, "|undefined| should fail" );
+  asserts.same( v.integer( undefined ), undefined, "|undefined| should pass" );
   asserts.same( v.integer( "" ), "", "Empty string should pass" );
-  asserts.same( v.integer( "foo" ), undefined, "Non-numeric string should fail" );
-  asserts.same( v.integer( "123foo" ), undefined, "Mixed string should fail" );
+  asserts.throws( function() { v.integer( "foo" ); }, "Non-numeric string should fail" );
+  asserts.throws( function() { v.integer( "123foo" ); }, "Mixed string should fail" );
   asserts.same( v.integer( "123" ), 123, "Simple numeric string should return a number" );
-  asserts.same( v.integer( "123.456" ), undefined, "Numeric string with decimal point should fail" );
+  asserts.throws( function() { v.integer( "123.456" ); }, "Numeric string with decimal point should fail" );
   asserts.same( v.integer( 123 ), 123, "Integers should be unchanged" );
-  asserts.same( v.integer( 123.456 ), undefined, "Floats should fail" );
+  asserts.throws( function() { v.integer( 123.456 ); }, "Floats should fail" );
 }
 
 // 0 is neither positive nor negative
 exports.test_Positive = function () {
   var v = Validation.prototype.validators;
-  asserts.same( v.positive( -123 ), undefined, "Negative integers should fail" );
-  asserts.same( v.positive( -123.456 ), undefined, "Negative floats should fail" );
-  asserts.same( v.positive( 0 ), undefined, "Zero should fail" );
+  asserts.same( v.positive( undefined ), undefined, "|undefined| should pass" );
+  asserts.same( v.positive( "" ), "", "Empty string should pass" );
+  asserts.throws( function() { v.positive( -123 ); }, "Negative integers should fail" );
+  asserts.throws( function() { v.positive( -123.456 ); }, "Negative floats should fail" );
+  asserts.throws( function() { v.positive( 0 ); }, "Zero should fail" );
   asserts.same( v.positive( 123 ), 123, "Positive integers should pass" );
   asserts.same( v.positive( 123.456 ), 123.456, "Positive floats should pass" );
 }
 
 exports.test_ValidateFieldChaining = function () {
   var v = new Validation();
-  var chained = { validation : [ "notEmpty", "integer", "positive" ] };
+  var chained = { validation : [ "trim", "notEmpty", "integer", "positive" ] };
   asserts.throws( function() { v.validateField( chained, "" ); }, "Empty field should throw error" );
+  asserts.throws( function() { v.validateField( chained, "  " ); }, "Whitespace only should throw error" );
   asserts.throws( function() { v.validateField( chained, "foo" ); }, "Non integer should throw error" );
   asserts.throws( function() { v.validateField( chained, "-123" ); }, "Negative integer should throw an error" );
   asserts.same( v.validateField( chained, "123" ), 123, "Positive integer should be parsed into a number" );
+  asserts.same( v.validateField( chained, " 123 " ), 123, "Positive integer with trimmable whitespace should be parsed into a number" );
 }
 
 exports.test_ValidateFieldMessages = function () {
@@ -86,10 +90,13 @@ exports.test_ValidateFieldMessages = function () {
 
   // |message| present
   var one_message = {
-    validation : [ "notEmpty", "integer" ],
+    validation : [ "trim", "notEmpty", "integer" ],
     message : "one message"
   };
   asserts.throws( function() { v.validateField( one_message, "" ); },
+                  "one message",
+                  "All errors should throw single message" );
+  asserts.throws( function() { v.validateField( one_message, " " ); },
                   "one message",
                   "All errors should throw single message" );
   asserts.throws( function() { v.validateField( one_message, "foo" ); },
@@ -98,7 +105,7 @@ exports.test_ValidateFieldMessages = function () {
 
   // |messages| present
   var many_messages = {
-    validation : [ "notEmpty", "integer" ],
+    validation : [ "trim", "notEmpty", "integer" ],
     messages : {
       "notEmpty" : "message for notEmpty",
       "integer" : "message for integer"
@@ -107,15 +114,21 @@ exports.test_ValidateFieldMessages = function () {
   asserts.throws( function() { v.validateField( many_messages, "" ); },
                   "message for notEmpty",
                   "notEmpty should throw its given message" );
+  asserts.throws( function() { v.validateField( many_messages, " " ); },
+                  "message for notEmpty",
+                  "notEmpty should throw its given message" );
   asserts.throws( function() { v.validateField( many_messages, "foo" ); },
                   "message for integer",
                   "integer should throw its given message" );
 
   // neither |message| nor |messages| present
   var no_messages = {
-    validation : [ "notEmpty", "integer" ]
+    validation : [ "trim", "notEmpty", "integer" ]
   };
   asserts.throws( function() { v.validateField( no_messages, "" ); },
+                  "notEmpty",
+                  "notEmpty should throw its name" );
+  asserts.throws( function() { v.validateField( no_messages, " " ); },
                   "notEmpty",
                   "notEmpty should throw its name" );
   asserts.throws( function() { v.validateField( no_messages, "foo" ); },
@@ -128,6 +141,9 @@ exports.test_ValidateFieldMessages = function () {
     "integer" : "default for integer"
   };
   asserts.throws( function() { v.validateField( no_messages, "" ); },
+                  "default for notEmpty",
+                  "notEmpty should throw it's default message" );
+  asserts.throws( function() { v.validateField( no_messages, " " ); },
                   "default for notEmpty",
                   "notEmpty should throw it's default message" );
   asserts.throws( function() { v.validateField( no_messages, "foo" ); },
