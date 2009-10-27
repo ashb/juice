@@ -148,7 +148,8 @@ SQLite3 interface</a> for a better overview.</p>
 }</code></pre>
 
 <p>We've given our <code>done</code> action an extra parameter <code>id</code>,
-but where's it coming from? From the URL mappings of course!</p>
+but where's it coming from? From the URL mappings of course! (the snippets in
+<ins>this style</ins> need to be added.)</p>
 
 <pre><code>app.urls = {
   "/?" : "index",
@@ -172,7 +173,7 @@ doing:</p>
 get( "/" );</code></pre>
 
 <p>If that went as planned, the first item on your list should be gone. Now we
-just need to add a link to the template:</p>
+just need to add a link to the <code>templates/index.tt</code> template:</p>
 
 <pre><code>&lt;ul&gt;
   [% FOREACH t IN tasks %]
