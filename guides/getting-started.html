@@ -1,0 +1,265 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+  "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <title>Getting started with Juice</title>
+  <link rel="stylesheet" type="text/css" href="../juice.css">
+  <style type="text/css">
+    pre {
+      background: #eee;
+      border: 2px solid #666;
+      margin-left: 20px;
+      margin-right: 20px;
+      padding: 10px;
+    }
+    ins {
+      background: #9f9;
+      text-decoration: none;
+    }
+    span {
+      background: #d11;
+      color: #fff;
+    }
+  </style>
+</head>
+<body>
+
+<div id="content">
+
+<h1>Getting started with Juice</h1>
+
+<p>We're going to build a todo list. Not very glamorous, but it'll serve as a
+good vessel for talking through the basics of writing apps in Juice.</p>
+
+<h2>Getting it running</h2>
+
+<p>The first thing to do is to <a href="http://juicejs.org/">download and
+install the latest version of Juice</a>. Then we need to create a new project.
+Open a terminal and execute the following command:</p>
+
+<pre><code>juice init todolist</code></pre>
+
+<p>This should have created a skeleton project structure in the directory
+<code>todolist</code>. Let's start the server and see what we've got:</p>
+
+<pre><code>cd todolist
+./script/server</code></pre>
+
+<p>Your app should now be running locally on port 3000 so fire up a browser and
+hit <code>http://localhost:3000/</code>. Now we've got it running it's time to
+write some code.</p>
+
+<h2>The basics</h2>
+
+<p>Let's get a data source ready for our todo list. Open another terminal and
+change to the project directory. Then we'll fire up a database shell and add
+some data</p>
+
+<pre><code>sqlite3 db/development.sqlite3
+CREATE TABLE task ( id INTEGER PRIMARY KEY, description TEXT );
+INSERT INTO task ( description ) VALUES ( "Display all tasks" );
+INSERT INTO task ( description ) VALUES ( "Mark tasks as done" );
+INSERT INTO task ( description ) VALUES ( "Add new tasks" );</code></pre>
+
+<p>That should keep us going for now. Next up we need a model to pull the data
+out. Open up your favourite editor and point it at <code>lib/app.js</code> in
+the project directory. We want to create an <code>all</code> method to pull out
+a list of tasks:</p>
+
+<pre><code>const SQLite3 = require( 'sqlite3' ).SQLite3;
+app.db = new SQLite3( DOC_ROOT + "db/development.sqlite3" );
+
+app.models.tasks.all = function() {
+  return this.db.query( "SELECT * FROM task" );
+}</code></pre>
+
+<p>Next up is a controller. Controllers are passed any captures from the url
+map, and called with a <code>this</code> object of the Juice app. They are
+expected to return an object containing relevant data. In our case that will be
+an array of the tasks in the system. This object is used to render templates or
+JSON/XML responses when using XHR.</p>
+
+<pre><code>app.controllers.index = function() {
+  var tasks = this.models.tasks.all();
+  return { tasks : tasks };
+}</code></pre>
+
+<p>Let's associate our new action with a URL:</p>
+
+<pre><code>app.urls = {
+  "/?" : "index"
+}</code></pre>
+
+<p>The keys of <code>app.urls</code> are rooted regexes and the values are
+actions which should be called when the path matches. Juice will go with the
+first match it finds, so make sure you get your rules in the appropriate order.
+In our case <code>"/?"</code> will be converted to the regex
+<code>/^\/?$/</code>, which will match both an empty string and a single
+slash.</p>
+
+<p>To check our new code is working as expected we can fire up an interactive
+console:</p>
+
+<pre><code>./script/console
+get( "/" )</code></pre>
+
+<p>This will print out the data returned by the controller that handles the URL
+<code>"/"</code>. Hopefully that will be an object containing all of the tasks
+you entered in the database.</p>
+
+<p>Now that we've seen everything so far is working we need a template to
+render the content. Enter Template Toolkit. Point your editor at
+<code>templates/tasks/index.tt</code></p>
+
+<pre><code>&lt;ul&gt;
+  [% FOREACH t IN tasks %]
+    &lt;li&gt;[% t.description | html %]&lt;/li&gt;
+  [% END %]
+&lt;/ul&gt;</code></pre>
+
+<h2>Redirects</h2>
+
+<p>We need to be able to mark tasks as complete so let's open up
+<code>lib/app.js</code> again and add some functionality to the model and
+controller.</p>
+
+<pre><code>app.models.tasks.delete = function( id ) {
+  var delete = "DELETE FROM tasks WHERE id = ?";
+  this.db.exec( delete, [ id ] );
+}</code></pre>
+
+<p>Here we've used the <code>db.exec</code> method. <span>TODO explain db.exec
+and parameter binding.</span></p>
+
+<pre><code>app.controllers.done = function( id ) {
+  this.models.tasks.delete( id );
+  return {};
+}</code></pre>
+
+<p>We've given our <code>done</code> action an extra parameter <code>id</code>,
+but where's it coming from? From the URL mappings of course!</p>
+
+<pre><code>app.urls = {
+  "/?" : "index"<ins>,
+  "/done/([0-9]+)" : { action : "done", redirect : "/" }</ins>
+}</code></pre>
+
+<p>The match for the subgroup in the regex is passed to the action as a
+parameter. For example, the URL <code>/done/123</code> would pass the parameter
+<code>123</code>.</p>
+
+<p>The other new thing we have here is a redirect. Instead of rendering a
+template the app will redirect to the given URL.</p>
+
+<p>Fire up <code>./script/console</code> again to see how we're
+doing:</p>
+
+<pre><code>get( "/done/1" );
+get( "/" );</code></pre>
+
+<p>If that went as planned, the first item on your list should be gone. Now we
+just need to add a link to the template:</p>
+
+<pre><code>&lt;ul&gt;
+  [% FOREACH t IN tasks %]
+    &lt;li&gt;<ins>&lt;a href="/done/[% t.id %]"&gt;</ins>[% t.description | html %]<ins>&lt;/a&gt;</ins>&lt;/li&gt;
+  [% END %]
+&lt;/ul&gt;</code></pre>
+
+<p>Fire up your browser again and try it out -- mark off the task we just
+completed.</p>
+
+<h2>User input</h2>
+
+<p>Next on the list, being able to create tasks. Let's start with the
+model:</p>
+
+<pre><code>app.models.tasks.create = function( description ) {
+  var insert = "INSERT INTO tasks ( description ) VALUES ( ? )";
+  this.db.exec( insert, [ description ] );
+}</code></pre>
+
+<p>New syntax time! Notice we're using a named parameter here instead of just
+using a <code>?</code>. Instead of passing an array of parameters to bind we
+pass in an object and it grabs the properties used.</p>
+
+<pre><code>app.controllers.new = function() {
+  var form = { fields : {
+    description : {
+      validation : [ "trim", "notEmpty" ]
+    }
+  } };
+
+  if ( env.requestMethod != "POST" )
+    return { form : form };
+
+  form = this.validate( form.fields, env.juice.params.post );
+
+  if ( ! form.valid )
+    return { form : form };
+
+  this.models.tasks.create( form.fields.description.value };
+
+  this.redirectTo = "/";
+
+  return {};
+}</code></pre>
+
+<p>Let's break this down. First we define what input for a new task should look
+like -- in this case we want a description which is valid provided it's not
+empty after being trimmed. The validation routines are called in order, with
+each being passed the value the previous one returned. If all the checks are
+passed the value is updated for that field in the object returned. <span>If an
+error is found...</span></p>
+
+<p>For the done action we used a redirect in the URL config because we always
+want to redirect after that action. Here we want to render a template if no
+data is posted or there are validation errors with the data posted. The
+<code>this.redirectTo = "/";</code> stashes a forwarding URL which Juice picks
+up when working out whether to render or redirect.</p>
+
+<pre><code>app.urls = {
+  "/?" : "index",
+  "/done/([0-9]+)" : { action : "done", redirect : "/" }<ins>,
+  "/new" : "new"</ins>
+}</code></pre>
+
+<p>Now we need a template to render the form and display validation errors.
+Open up <code>templates/tasks/new.tt</code>:</p>
+
+<pre><code>&lt;form action="/new"&gt;
+  &lt;p&gt;
+    &lt;label for="description"&gt;Task description&lt;/label&gt;
+    &lt;input id="description" name="description" type="text"
+           value="[% form.fields.description.value | html %]"&gt;
+    [% IF form.fields.description.error %]
+      &lt;p class="error"&gt;[% form.fields.description.error %]&lt;/p&gt;
+    [% END %]
+  &lt;/p&gt;
+  &lt;p&gt;
+    &lt;input type="submit" value="Create new task"&gt;
+  &lt;/p&gt;
+&lt;/form&gt;
+</code></pre>
+
+<p>Try it out. You should be able to put in an empty string (or just
+whitespace) and have it give you an error. If you put in some text you should
+get be redirected to the index view and see the new item there.</p>
+
+<h2>What's missing?</h2>
+
+<p>In the spirit of "release-early, release-often" we wanted to get Juice out
+there. Unfortunately this means we're missing a bunch of things we think would
+be beneficial for newcomers working from this guide:</p>
+
+<ul>
+  <li>Abstracting the database handle to app.db based on the values in a config
+  file and providing a script to access a console for it.</li>
+  <li>Extending the guide to cover using XHR with the automatically generated
+  JSON responses.</li>
+</ul>
+
+</div>
+
+</body>
+</html>

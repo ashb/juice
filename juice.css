@@ -4,84 +4,55 @@
 h1, h2, h3, h4, h5, h6 { font-size: 100%; font-weight: inherit; }
 strong, em, code { font-style: inherit; font-weight: inherit; }
 
-/* typography */
+/* site wide */
 
 body {
   background: #fff;
   color: #444;
-  font: 14px/21px "Lucida Grande", "Lucida Sans", "Lucida Sans Unicode", sans-serif;
+  font: 14px/21px "Helvetica Neue", "Trebuchet MS", "Arial", "Helvetica", sans-serif;
+  margin: 0 auto;
+  width: 640px;
 }
 
 #header {
-  background: #79d108;
-  color: #fff;
-  font-family: "Gill Sans Light", "GillSans-Light", "Gill Sans", Corbel, sans-serif;
-  font-weight: 300;
-  padding-bottom: 21px;
-}
-
-#content {
-  margin: 0 auto;
-  overflow: hidden;
-  padding: 21px 0;
-  width: 960px;
-}
-
-#why, #learn {
-  float: left;
-  padding-left: 20px;
-  width: 440px;
-}
-
-#installation {
-  clear: both;
-  padding: 0 20px;
-}
-
-#why-not,
-#contribute {
-  float: right;
-  padding-right: 20px;
-  width: 440px;
+  margin: 21px 0;
 }
 
 #header h1 {
-  background: url(logo.png) no-repeat 0 12px;
-  color: #000;
-  font-size: 48px;
-  line-height: 63px;
-  margin: 0 auto;
-  padding-left: 45px;
-  text-shadow: 1px 1px #a6f540;
-  text-transform: lowercase;
-  width: 875px;
-}
-
-#header h1 em {
-  font-family: "Gill Sans", Corbel, sans-serif;
-  font-weight: normal;
+  background: url(juice-gs-banner.png) no-repeat 0 0;
+  height: 252px;
+  text-indent: -9999px;
+  width: 630px;
 }
 
 #header p {
-  font-size: 24px;
-  line-height: 30.5px;
-  margin: 0 auto;
-  width: 920px;
+  font: 300 24px/30.5px "HelveticaNeue-Light" "Helvetica Neue", "Trebuchet MS", "Arial", "Helvetica", sans-serif;
+}
+
+#content p,
+ul, ol, pre {
+  margin-bottom: 21px;
 }
 
 h2 {
-  color: #ffc612;
+  color: #000;
   font-size: 24px;
   font-weight: bold;
   line-height: 32px;
+  margin-top: 42px;
   padding-bottom: 10px;
 }
 
 code {
-  background: #fff9db;
-  color: #74963b;
+  background: #ccc;
+  color: #000;
   font-family: Monaco, Consolas, monospace;
   white-space: nowrap;
+}
+
+pre code {
+  background: none;
+  white-space: inherit;
 }
 
 a {
@@ -94,44 +65,7 @@ a:hover {
   text-decoration: none;
 }
 
-#content ul {
-  color: #ffc612;
-}
-
-#why li, #why-not li {
-  margin-bottom: 21px;
-}
-
 h3 {
   color: #000;
   font-weight: bold;
-}
-
-#content h3 em {
-  background: #ffc612;
-  color: #fff;
-  padding: 0 2px;
-}
-
-#content li p {
-  color: #444;
-}
-
-#installation ol,
-#installation p {
-  margin-bottom: 21px;
-}
-
-#installation ol {
-  color: #ffc612;
-  list-style-type: disc;
-}
-
-#installation ol span {
-  color: #444;
-}
-
-dt {
-  float: left;
-  margin-right: 7px;
 }

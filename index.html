@@ -15,116 +15,87 @@
   </div>
 
   <div id="content">
-    <div id="why">
-      <h2>Why use Juice?</h2>
+    <h2>What is Juice?</h2>
 
-      <ul>
-        <li>
-          <h3>Javascript is fun.</h3>
-          <p>If you enjoy working in javascript, then you'll enjoy Juice. If you
-          don't, you probably won't get much out of it.</p>
-        </li>
-        <li>
-          <h3>Lower barriers.</h3>
-          <p>With your client-side and server-side code in the same language,
-          your development won't hit as many communication blocks or gear
-          changes.</p>
-        </li>
-        <li>
-          <h3><em>Planned</em> Share code between client and server.</h3>
-          <p>Common helpers and validation routines written only need writing
-          once and can be used in your controllers, templates and client-side
-          code.</p>
-        </li>
-      </ul>
-    </div>
+    <p>Juice is a server-side web framework built around <a
+    href="http://wiki.commonjs.org/wiki/">CommonJS</a> modules and specifically
+    the <a href="http://wiki.commonjs.org/wiki/JSGI/Level0/A">JSGI 0.3
+    proposal</a>. Its an open-source stack released under the MIT license that
+    comes bundled with its own development server and a javascript
+    interpreter.</p>
 
-    <div id="why-not">
-      <h2>Why not Juice?</h2>
+    <p>CommonJS aims to bring some portability to the world of serverside
+    javascript, and the Juice core is no different.  Right now we've only
+    checked that it runs on <a href="http://flusspferd.org/">Flusspferd</a>
+    (the JS interpreter based on spidermonkey that comes bundled in the dists)
+    but in the future we'll make sure the Juice stack runs portably across all
+    conforming CommonJS implementations</p>
 
-      <ul>
-        <li>
-          <h3>It's not production-ready.</h3>
-          <p>We started writing Juice to scratch an itch. If you want to play
-          around or use it for a vanity site or a toy project then great, but
-          if you're looking to launch your VC-funded app next month you might
-          want to pick something else.</p>
-        </li>
-        <li>
-          <h3>You need Enterprise labels.</h3>
-          <p>If you have to sell this your boss then Juice probably isn't for
-          you.</p>
-        </li>
-        <li>
-          <h3>You hate javascript.</h3>
-          <p>We understand, though we think there's a good chance your hatred
-          of it comes from dealing with browser inconsistencies, so we think
-          you should give it a try anyway.</p>
-        </li>
-      </ul>
-    </div>
+    <h2>Why use Juice?</h2>
 
-    <div id="installation">
-      <h2>Installation</h2>
+    <ul>
+      <li>
+        <h3>Javascript is fun.</h3>
+        <p>If you enjoy working in javascript, then you'll enjoy Juice. If you
+        don't, you probably won't get much out of it.</p>
+      </li>
+      <li>
+        <h3>Lower barriers.</h3>
+        <p>With your client-side and server-side code in the same language,
+        your development won't hit as many communication blocks or gear
+        changes.</p>
+      </li>
+      <li>
+        <h3>Share code between client and server.</h3>
+        <p>Common helpers and validation routines written only need writing
+        once and can be used in your controllers, templates and client-side
+        code.</p>
+      </li>
+    </ul>
 
-      <div id="mac-os-x">
-        <h3><em>Mac OS X</em> (10.5+)</h3>
+    <h2>Installation</h2>
 
-        <ol>
-          <li><span>Download and install <a href="#">Juice 0.1 (2.1MB dmg)</a></span></li>
-          <li><span>Open Terminal and create a project: <code>juice init helloworld</code></span></li>
-          <li><span>Start the server: <code>./helloworld/script/server</code></span></li>
-          <li><span>Visit your app: <code>open http://localhost:3000/</code></span></li>
-        </ol>
-      </div>
+    <h3>Mac OS X (10.5+)</h3>
 
-      <div id="windows">
-        <h3><em>Windows</em> (XP or newer)</h3>
+    <ol>
+      <li>Download and install <a href="/downloads/Juice-0.1.dmg">Juice 0.1 (1.8M dmg)</a></li>
+      <li>Open Terminal and create a project: <code>juice init helloworld</code></li>
+      <li>Start the server: <code>./helloworld/script/server</code></li>
+      <li>Visit your app: <code>open http://localhost:3000/</code></li>
+    </ol>
 
-        <ol>
-          <li><span>Download and install <a href="#">Juice 0.1 (3.4MB msi)</a></span></li>
-          <li><span>Open a command prompt and create a project: <code>juice init helloworld</code></span></li>
-          <li><span>Start the server: <code>helloworld\script\server.bat</code></span></li>
-          <li><span>Visit your app at http://localhost:3000/</span></li>
-        </ol>
-      </div>
+    <h3>Windows (XP or newer)</h3>
 
-      <div id="linux">
-        <h3><em>Linux</em> (TODO)</h3>
+    <ol>
+      <li>Download and extract <a href="/downloads/Juice-0.1.zip">Juice 0.1 (4.6M zip)</a></li>
+      <li>Add <code>Juice/bin</code> to your path</li>
+      <li>Open a command prompt and create a project: <code>flusspferd juice init helloworld</code></li>
+      <li>Start the server: <code>flusspferd helloworld\script\server</code></li>
+      <li>Visit your app: <code>start http://localhost:3000/</code></li>
+    </ol>
 
-        <ol>
-          <li><span><a href="http://flusspferd.org/docs/install.html">Install Flusspferd from source</a></span></li>
-          <li><span>Install Juice: <code>flusspferd --install-module juice</code></span></li>
-          <li><span>Start the server: <code>./helloworld/script/server</code></span></li>
-          <li><span>Visit your app at http://localhost:3000/</span></li>
-        </ol>
-      </div>
-    </div>
+    <h3>Linux</h3>
 
-    <div id="learn">
-      <h2>Learn more</h2>
+    <p>We don't have a package built for you, but they are <strong>coming
+    soon</strong>. If you really can't wait a day jump onto IRC and we'll walk
+    you through getting it running.</p>
 
-      <dl>
-        <dt>Guides</dt>
-        <dd><a href="/guides/getting-started">Getting started with Juice</a></dd>
-        <dt>IRC</dt>
-        <dd><a href="irc://irc.freenode.net/#juicejs">#juicejs on irc.freenode.net</a></dd>
-      </dl>
-    </div>
+    <h2>Next steps</h2>
 
-    <div id="contribute">
-      <h2>Contribute</h2>
-
-      <dl>
-        <dt>Source</dt>
-        <dd><a href="http://github.com/ashb/juice/">http://github.com/ashb/juice/</a></dd>
-        <dt>Issue tracker</dt>
-        <dd><a href="http://juicejs.lighthouseapp.com/">http://juicejs.lighthouseapp.com/</a></dd>
-      </dl>
-    </div>
+    <ul>
+      <li><a href="/guides/getting-started">Guide: Getting started with Juice</a></li>
+      <li><a href="irc://irc.freenode.net/#juicejs">IRC in #juicejs on irc.freenode.net</a></dd>
+      <li><a href="http://github.com/ashb/juice/">Source code on Github</a></li>
+      <li><a href="http://juicejs.lighthouseapp.com/">Issue tracker on Lighthouse</a></li>
+    </ul>
   </div>
 
-  <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js"></script>
-  <script type="text/javascript" src="juice.js"></script>
+  <script src="http://www.google-analytics.com/ga.js" type="text/javascript"></script>
+  <script type="text/javascript">
+    try {
+    var pageTracker = _gat._getTracker("UA-11222885-1");
+    pageTracker._trackPageview();
+    } catch(err) {}
+  </script>
 </body>
 </html>
