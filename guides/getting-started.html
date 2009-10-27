@@ -74,10 +74,10 @@ for fetching all rows from a query in version 0.2.</p>
 
 <p>Next up is a controller. Controllers are passed any captures from the url
 map and should return an object containing relevant data. They are called
-with a this set an object which contains state about the request &#8212; the
-Juice app instance. In our case that will be an array of the tasks in the
-system. This object is used to render templates or JSON/XML responses when
-using XHR.</p>
+with a <code>this</code> object which contains state about the request
+&#8212; the Juice app instance. In our case that will be an array of the
+tasks in the system. This object is used to render templates or JSON/XML
+responses when using XHR.</p>
 
 <p>Replace the stub index controller action in <code>lib/app.js</code> with
 this one:</p>
