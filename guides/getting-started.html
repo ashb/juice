@@ -4,23 +4,6 @@
 <head>
   <title>Getting started with Juice</title>
   <link rel="stylesheet" type="text/css" href="../juice.css">
-  <style type="text/css">
-    pre {
-      background: #eee;
-      border: 2px solid #666;
-      margin-left: 20px;
-      margin-right: 20px;
-      padding: 10px;
-    }
-    ins {
-      background: #9f9;
-      text-decoration: none;
-    }
-    span {
-      background: #d11;
-      color: #fff;
-    }
-  </style>
 </head>
 <body>
 
@@ -70,14 +53,24 @@ a list of tasks:</p>
 app.db = new SQLite3( DOC_ROOT + "db/development.sqlite3" );
 
 app.models.tasks.all = function() {
-  return this.db.query( "SELECT * FROM task" );
+  var cursor = this.db.query( "SELECT id, description FROM task" ),
+      tasks = [];
+
+  for ( var row = cursor.next( true ); row; row = cursor.next( true ) )
+    tasks.push( row );
+
+  return tasks;
 }</code></pre>
 
+<p class="note">We're aware this is ugly and there'll be a much nicer syntax
+for fetching all rows from a query in version 0.2.</p>
+
 <p>Next up is a controller. Controllers are passed any captures from the url
-map, and called with a <code>this</code> object of the Juice app. They are
-expected to return an object containing relevant data. In our case that will be
-an array of the tasks in the system. This object is used to render templates or
-JSON/XML responses when using XHR.</p>
+map and should return an object containing relevant data. They are called
+with a this set an object which contains state about the request &#8212; the
+Juice app instance. In our case that will be an array of the tasks in the
+system. This object is used to render templates or JSON/XML responses when
+using XHR.</p>
 
 <pre><code>app.controllers.index = function() {
   var tasks = this.models.tasks.all();
@@ -107,7 +100,7 @@ get( "/" )</code></pre>
 <code>"/"</code>. Hopefully that will be an object containing all of the tasks
 you entered in the database.</p>
 
-<p>Now that we've seen everything so far is working we need a template to
+<p>Now that we've checked everything so far is working we need a template to
 render the content. Enter Template Toolkit. Point your editor at
 <code>templates/tasks/index.tt</code></p>
 
@@ -128,8 +121,13 @@ controller.</p>
   this.db.exec( delete, [ id ] );
 }</code></pre>
 
-<p>Here we've used the <code>db.exec</code> method. <span>TODO explain db.exec
-and parameter binding.</span></p>
+<p>Here we've used the <code>db.exec</code> method which will execute the
+statement given and return the number of rows affected; useful for INSERT,
+UPDATE and DELETE statements. We've also used parameter binding here: if you
+put one or more question marks in the statement you can pass in an array of
+replacements. You can also pass by reference instead of order. Read the
+<a href="http://flusspferd.org/docs/js/SQLite3">documentation for the
+SQLite3 interface</a> for a better overview.</p>
 
 <pre><code>app.controllers.done = function( id ) {
   this.models.tasks.delete( id );
@@ -166,8 +164,8 @@ just need to add a link to the template:</p>
   [% END %]
 &lt;/ul&gt;</code></pre>
 
-<p>Fire up your browser again and try it out -- mark off the task we just
-completed.</p>
+<p>Fire up your browser again and try it out &#8212; mark off the task we
+just completed.</p>
 
 <h2>User input</h2>
 
@@ -205,12 +203,17 @@ pass in an object and it grabs the properties used.</p>
   return {};
 }</code></pre>
 
-<p>Let's break this down. First we define what input for a new task should look
-like -- in this case we want a description which is valid provided it's not
-empty after being trimmed. The validation routines are called in order, with
-each being passed the value the previous one returned. If all the checks are
-passed the value is updated for that field in the object returned. <span>If an
-error is found...</span></p>
+<p>Let's break this down. First we define what input for a new task should
+look like &#8212; in this case we want a description which is valid provided
+it's not empty after being trimmed. We then check if the request was posted,
+and if not return the empty form. If it was posted we validate the data
+against our empty form, and if it fails we return the form with errors. If
+we're still going at this point we create the new task and redirect to the
+index page.</p>
+
+<p class="note">We know this doesn't give a good summary of the validation
+framework and a guide on that topic will be available by the time 0.2 is
+released.</p>
 
 <p>For the done action we used a redirect in the URL config because we always
 want to redirect after that action. Here we want to render a template if no
