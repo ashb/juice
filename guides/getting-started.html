@@ -47,7 +47,7 @@ INSERT INTO task ( description ) VALUES ( "Add new tasks" );</code></pre>
 <p>That should keep us going for now. Next up we need a model to pull the data
 out. Open up your favourite editor and point it at <code>lib/app.js</code> in
 the project directory. Make sure that all code you add to this file is before
-the final <code>setup()</code> call.We want to create an <code>all</code>
+the final <code>setup()</code> call. We want to create an <code>all</code>
 method to pull out a list of tasks:</p>
 
 <pre><code>const SQLite3 = require( 'sqlite3' ).SQLite3;
@@ -58,7 +58,7 @@ app.models.tasks.all = function() {
   var cursor = app.db.query( "SELECT id, description FROM task" ),
       tasks = [];
 
-  for ( var row = cursor.next( true ); row; row = cursor.next( true ) )
+  while ( ( var row = cursor.next( true ) ) )
     tasks.push( row );
 
   return tasks;
@@ -74,7 +74,8 @@ Juice app instance. In our case that will be an array of the tasks in the
 system. This object is used to render templates or JSON/XML responses when
 using XHR.</p>
 
-<p>Replace the stub index controller action with this one:</p>
+<p>Replace the stub index controller action in <code>lib/app.js</code> with
+this one:</p>
 
 <pre><code>app.controllers.index = function() {
   var tasks = this.models.tasks.all();
