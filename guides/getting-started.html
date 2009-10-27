@@ -46,14 +46,16 @@ INSERT INTO task ( description ) VALUES ( "Add new tasks" );</code></pre>
 
 <p>That should keep us going for now. Next up we need a model to pull the data
 out. Open up your favourite editor and point it at <code>lib/app.js</code> in
-the project directory. We want to create an <code>all</code> method to pull out
-a list of tasks:</p>
+the project directory. Make sure that all code you add to this file is before
+the final <code>setup()</code> call.We want to create an <code>all</code>
+method to pull out a list of tasks:</p>
 
 <pre><code>const SQLite3 = require( 'sqlite3' ).SQLite3;
 app.db = new SQLite3( DOC_ROOT + "db/development.sqlite3" );
 
-app.models.tasks.all = function() {
-  var cursor = this.db.query( "SELECT id, description FROM task" ),
+app.models.tasks = { }
+app.models.tasks.all = function()
+  var cursor = app.db.query( "SELECT id, description FROM task" ),
       tasks = [];
 
   for ( var row = cursor.next( true ); row; row = cursor.next( true ) )
@@ -72,15 +74,21 @@ Juice app instance. In our case that will be an array of the tasks in the
 system. This object is used to render templates or JSON/XML responses when
 using XHR.</p>
 
+Replace the stub index controller action with this one:
+
 <pre><code>app.controllers.index = function() {
   var tasks = this.models.tasks.all();
   return { tasks : tasks };
 }</code></pre>
 
-<p>Let's associate our new action with a URL:</p>
+<p>Let's associate our new action with a URL. The boilerplate scripts already
+give you this default mapping, so you dont have to add this</p>
 
 <pre><code>app.urls = {
-  "/?" : "index"
+  "/?" : "index",
+
+  "/styles": { static: "./static/styles" },
+  "/scripts": { static: "./static/scripts" }
 }</code></pre>
 
 <p>The keys of <code>app.urls</code> are rooted regexes and the values are
@@ -102,7 +110,8 @@ you entered in the database.</p>
 
 <p>Now that we've checked everything so far is working we need a template to
 render the content. Enter Template Toolkit. Point your editor at
-<code>templates/tasks/index.tt</code></p>
+<code>templates/index.tt</code> and replace the contents of the
+<code>&lt;body&gt;</code> with the snippet below:</p>
 
 <pre><code>&lt;ul&gt;
   [% FOREACH t IN tasks %]
@@ -138,8 +147,11 @@ SQLite3 interface</a> for a better overview.</p>
 but where's it coming from? From the URL mappings of course!</p>
 
 <pre><code>app.urls = {
-  "/?" : "index"<ins>,
-  "/done/([0-9]+)" : { action : "done", redirect : "/" }</ins>
+  "/?" : "index"<ins>
+  "/done/([0-9]+)" : { action : "done", redirect : "/" },</ins>
+
+  "/styles": { static: "./static/styles" },
+  "/scripts": { static: "./static/scripts" } 
 }</code></pre>
 
 <p>The match for the subgroup in the regex is passed to the action as a
