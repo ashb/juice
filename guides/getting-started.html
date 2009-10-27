@@ -41,7 +41,7 @@ anything but Windows), feel free to background the process (^Z and
 
 <p>Let's get a data source ready for our todo list. Open another terminal and
 change to the project directory. Then we'll fire up a database shell and add
-some data</p>
+some data:</p>
 
 <pre><code>sqlite3 db/development.sqlite3
 CREATE TABLE task ( id INTEGER PRIMARY KEY, description TEXT );
@@ -58,7 +58,7 @@ method to pull out a list of tasks:</p>
 <pre><code>const SQLite3 = require( 'sqlite3' ).SQLite3;
 app.db = new SQLite3( DOC_ROOT + "db/development.sqlite3" );
 
-app.models.tasks = { }
+app.models.tasks = {};
 app.models.tasks.all = function() {
   var cursor = app.db.query( "SELECT id, description FROM task" ),
       tasks = [];
@@ -88,7 +88,7 @@ this one:</p>
 }</code></pre>
 
 <p>Let's associate our new action with a URL. The boilerplate scripts already
-give you this default mapping, so you dont have to add this</p>
+give you this default mapping, so you dont have to add this:</p>
 
 <pre><code>app.urls = {
   "/?" : "index",
@@ -104,11 +104,11 @@ In our case <code>"/?"</code> will be converted to the regex
 <code>/^\/?$/</code>, which will match both an empty string and a single
 slash.</p>
 
-<p>To check our new code is working as expected we can fire up an interactive
-console:</p>
+<p>To check our new code is working as expected we can fire up an
+interactive console from the terminal:</p>
 
 <pre><code>./script/console
-get( "/" )</code></pre>
+get( "/" );</code></pre>
 
 <p>This will print out the data returned by the controller that handles the URL
 <code>"/"</code>. Hopefully that will be an object containing all of the tasks
@@ -149,9 +149,9 @@ SQLite3 interface</a> for a better overview.</p>
   return {};
 }</code></pre>
 
-<p>We've given our <code>done</code> action an extra parameter <code>id</code>,
-but where's it coming from? From the URL mappings of course! (the snippets in
-<ins>this style</ins> need to be added.)</p>
+<p>We've given our <code>done</code> action an extra parameter
+<code>id</code>, but where's it coming from? From the URL mappings of
+course! (The new content is <ins>highlighted in green</ins>.)</p>
 
 <pre><code>app.urls = {
   "/?" : "index",
