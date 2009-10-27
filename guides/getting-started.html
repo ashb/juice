@@ -54,7 +54,7 @@ method to pull out a list of tasks:</p>
 app.db = new SQLite3( DOC_ROOT + "db/development.sqlite3" );
 
 app.models.tasks = { }
-app.models.tasks.all = function()
+app.models.tasks.all = function() {
   var cursor = app.db.query( "SELECT id, description FROM task" ),
       tasks = [];
 
@@ -74,7 +74,7 @@ Juice app instance. In our case that will be an array of the tasks in the
 system. This object is used to render templates or JSON/XML responses when
 using XHR.</p>
 
-Replace the stub index controller action with this one:
+<p>Replace the stub index controller action with this one:</p>
 
 <pre><code>app.controllers.index = function() {
   var tasks = this.models.tasks.all();
@@ -126,8 +126,8 @@ render the content. Enter Template Toolkit. Point your editor at
 controller.</p>
 
 <pre><code>app.models.tasks.delete = function( id ) {
-  var delete = "DELETE FROM tasks WHERE id = ?";
-  this.db.exec( delete, [ id ] );
+  var sql = "DELETE FROM task WHERE id = ?";
+  app.db.exec( sql, [ id ] );
 }</code></pre>
 
 <p>Here we've used the <code>db.exec</code> method which will execute the
@@ -186,7 +186,7 @@ model:</p>
 
 <pre><code>app.models.tasks.create = function( description ) {
   var insert = "INSERT INTO tasks ( description ) VALUES ( ? )";
-  this.db.exec( insert, [ description ] );
+  app.db.exec( insert, [ description ] );
 }</code></pre>
 
 <p>New syntax time! Notice we're using a named parameter here instead of just
