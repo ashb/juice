@@ -147,8 +147,8 @@ SQLite3 interface</a> for a better overview.</p>
 but where's it coming from? From the URL mappings of course!</p>
 
 <pre><code>app.urls = {
-  "/?" : "index"<ins>
-  "/done/([0-9]+)" : { action : "done", redirect : "/" },</ins>
+  "/?" : "index",
+<ins>  "/done/([0-9]+)" : { action : "done", redirect : "/" },</ins>
 
   "/styles": { static: "./static/styles" },
   "/scripts": { static: "./static/scripts" } 
@@ -235,8 +235,11 @@ up when working out whether to render or redirect.</p>
 
 <pre><code>app.urls = {
   "/?" : "index",
-  "/done/([0-9]+)" : { action : "done", redirect : "/" }<ins>,
-  "/new" : "new"</ins>
+  "/done/([0-9]+)" : { action : "done", redirect : "/" },
+<ins>  "/new" : "new",</ins>
+
+  "/styles": { static: "./static/styles" },
+  "/scripts": { static: "./static/scripts" }
 }</code></pre>
 
 <p>Now we need a template to render the form and display validation errors.
