@@ -185,7 +185,7 @@ just completed.</p>
 model:</p>
 
 <pre><code>app.models.tasks.create = function( description ) {
-  var insert = "INSERT INTO tasks ( description ) VALUES ( ? )";
+  var insert = "INSERT INTO task ( description ) VALUES ( ? )";
   app.db.exec( insert, [ description ] );
 }</code></pre>
 
@@ -200,15 +200,15 @@ pass in an object and it grabs the properties used.</p>
     }
   } };
 
-  if ( env.requestMethod != "POST" )
+  if ( this.request.method != "POST" )
     return { form : form };
 
-  form = this.validate( form.fields, env.juice.params.post );
+  form = this.validate( form.fields, this.params.post );
 
   if ( ! form.valid )
     return { form : form };
 
-  this.models.tasks.create( form.fields.description.value };
+  this.models.tasks.create( form.fields.description.value );
 
   this.redirectTo = "/";
 
@@ -243,9 +243,9 @@ up when working out whether to render or redirect.</p>
 }</code></pre>
 
 <p>Now we need a template to render the form and display validation errors.
-Open up <code>templates/tasks/new.tt</code>:</p>
+Open up <code>templates/new.tt</code>:</p>
 
-<pre><code>&lt;form action="/new"&gt;
+<pre><code>&lt;form action="/new" method="post"&gt;
   &lt;p&gt;
     &lt;label for="description"&gt;Task description&lt;/label&gt;
     &lt;input id="description" name="description" type="text"
@@ -260,7 +260,7 @@ Open up <code>templates/tasks/new.tt</code>:</p>
 &lt;/form&gt;
 </code></pre>
 
-<p>Try it out. You should be able to put in an empty string (or just
+<p>Try it out: <code>http://localhost:3000/new</code>. You should be able to put in an empty string (or just
 whitespace) and have it give you an error. If you put in some text you should
 get be redirected to the index view and see the new item there.</p>
 
