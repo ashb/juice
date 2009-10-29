@@ -38,6 +38,7 @@ var JuiceCLI = {
     var dir = fs.canonical(installer.makeTree(name));
     // create the directory structure
     var tree = [
+      dir + "/conf",
       dir + "/db",
       dir + "/lib",
       dir + "/script",
@@ -53,7 +54,8 @@ var files = [
   'templates/index.tt', 
   'static/styles/app.css', 
   'script/server',
-  'script/console'
+  'script/console',
+  'conf/templates.json'
 ];
 
 for each (f in files) {
