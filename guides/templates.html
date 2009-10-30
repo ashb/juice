@@ -1,0 +1,78 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+  "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <title>Using templates in Juice</title>
+  <link rel="stylesheet" type="text/css" href="../juice.css">
+</head>
+<body>
+
+<div id="logo">Juice</div>
+
+<div id="content">
+
+<h1>Using templates in Juice</h1>
+
+<p>Juice (like pretty much every other web framework) uses templates to
+render data from your controllers into HTML to be shown to the user. By
+default these templates use the extension </code>.tt</code> and the renderer
+<a href="http://github.com/ashb/template">Template Toolkit</a>, but you can
+configure Juice to use whatever extensions and renderers you like.</p>
+
+<h2>Configuring template renderers</h2>
+
+<p>The association of file extensions to renderer is done in
+<code>conf/templates.json</code>. The keys are file extensions and the
+values are modules used to render them:</p>
+
+<pre><code>{
+  "tt" : "Template",
+  "haml" : "haml"
+}</code></pre>
+
+<p class="note">For now at least, you must quote all keys and use double
+quotes for all strings. We hope to get an improved version of JSON.parse to
+fix this limitation.</p>
+
+<p>Priority is given in the same order as the file so in the example above
+if both <code>index.tt</code> and <code>index.haml</code> exist,
+<code>index.tt</code> would be used. If you need to associate multiple
+extensions with the same renderer just add another key/value pair:</p>
+
+<pre><code>{
+  "tt" : "Template",
+  "tt.html" : "Template"
+}</code></pre>
+
+<h2>Writing your own renderers</h2>
+
+<p>The only requirement on a template renderer for Juice is that it exposes
+a render method taking the template and view data as parameters:</p>
+
+<pre><code>exports.render = function( template, stash ) {
+  var t = new MyTemplateClass();
+  return t.to_html( template, stash );
+}</code></pre>
+
+<p>The first argument will be a string holding the contents of the template
+file. The second argument will be the object returned from the controller
+with any methods from <code>app.helpers</code> added in.</p>
+
+<p class="note">We don't have a standardised way for templates to load files
+yet (for use when rendering partials). Suggestions for tackling this would
+be gladly welcomed on our
+<a href="http://groups.google.com/group/juicejs/">mailing list</a> or in
+<a href="irc://irc.freenode.net/#juicejs">#juicejs on freenode</a>.</p>
+
+</div>
+
+<script src="http://www.google-analytics.com/ga.js" type="text/javascript"></script>
+<script type="text/javascript">
+  try {
+  var pageTracker = _gat._getTracker("UA-11222885-1");
+  pageTracker._trackPageview();
+  } catch(err) {}
+</script>
+
+</body>
+</html>
