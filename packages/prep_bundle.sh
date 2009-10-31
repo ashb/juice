@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# rm -r bin/ lib/ etc/ include/; bash prep_bundle.sh -j js=~/code/js/mozjs_release-4.2/ -d . .. ../../Zest ../../http-fetch ../../Template
+
 set -e
 
 declare -a copied # Array of libs copied
