@@ -16,7 +16,8 @@ with Juice:
         body: ["Hello Juicers!"]
       }
     }
-    app.actions = { "/?" : { action: "index", raw: true } };
+    app.urls = { "/?" : { action: "index", raw: true } };
+
     exports.app = app.setup();
 
 There's more to it than this obviously -- a getting started guide will be
