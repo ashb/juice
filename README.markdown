@@ -33,4 +33,4 @@ Version 0.2 will have FastCGI support.
 [JSGI]: http://wiki.commonjs.org/wiki/JSGI/Level0/A
 [Zest]: http://www.github.com/ashb/Zest
 [Flusspferd]: http://flusspferd.org
-[getting started guide]: http://juicejs.org/getting-started
+[getting started guide]: http://juicejs.org/guides/getting-started
