@@ -20,8 +20,8 @@ with Juice:
 
     exports.app = app.setup();
 
-There's more to it than this obviously -- a getting started guide will be
-available with version 0.1 which is due for release on 20th Oct. 2009. Edit: The code is mostly ready -- we're just holding off to test things a bit better and to finalize the design of the website.
+There's more to it than this obviously -- check out the [getting started
+guide] for an more thorough introdruction to the basics.
 
 Juice is currently known to run on [Flusspferd], and should run on other
 CommonJS platforms in the future -- it just hasn't been tested yet.
@@ -33,3 +33,4 @@ Version 0.2 will have FastCGI support.
 [JSGI]: http://wiki.commonjs.org/wiki/JSGI/Level0/A
 [Zest]: http://www.github.com/ashb/Zest
 [Flusspferd]: http://flusspferd.org
+[getting started guide]: http://juicejs.org/getting-started
