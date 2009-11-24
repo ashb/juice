@@ -1,7 +1,12 @@
 Juice? JavaScript? WTH?
+=======================
 
-A server-side Javascript webframework built on top of the JSGI protocol. Well,
-the [version 3 proposal][JSGI] using the built in asynchronous [Zest] HTTP server.
+What is JuiceJS?
+----------------
+
+JuiceJS is server-side Javascript webframework built on top of the JSGI
+protocol, version 3 (proposal). The [JSGI] interface is built using the
+asynchronous [Zest] HTTP server.
 
 If you like JS as a language, and clearly I do, then hopefully you'll get on
 with Juice:
@@ -21,7 +26,7 @@ with Juice:
     exports.app = app.setup();
 
 There's more to it than this obviously -- check out the [getting started
-guide] for an more thorough introdruction to the basics.
+guide] for an more thorough introduction to the basics.
 
 Juice is currently known to run on [Flusspferd], and should run on other
 CommonJS platforms in the future -- it just hasn't been tested yet.
