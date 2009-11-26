@@ -1,0 +1,81 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+  "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <title>Shell scripting with javascript</title>
+  <link rel="stylesheet" type="text/css" href="../juice.css">
+</head>
+<body>
+
+<div id="logo">Juice</div>
+
+<div id="content">
+
+<h1>Shell scripting with javascript</h1>
+
+<p>Use familiar tools and techniques from within the browser outside of it.</p>
+
+<h2>Running your script</h2>
+
+<p>Pass the script as an argument to <code>flusspferd</code> or include a
+shebang that specifies flusspferd as the interpreter:</p>
+
+<pre><code>#!/usr/bin/env flusspferd
+print( "Hello world!" );</code></pre>
+
+<h2>Taking arguments from the command line</h2>
+
+<p>You can use <code>require( "system" ).args</code> to get an array of all
+arguments. The first argument will be the name of the script. Try it out with
+the following script:</p>
+
+<pre><code>#!/usr/bin/env flusspferd
+print( require( "system" ).args.toSource() );</code></pre>
+
+<p>If you need more sophisticated argument handing you can try the getopt
+module. To use it you define a "spec" for the arguments your script accepts and
+get returned a structured set of options:</p>
+
+<pre><code>#!/usr/bin/env flusspferd
+
+var opt = require( "getopt" ).args( {
+  verbose : {
+    alias : "v"
+  },
+  output : {
+    argument : 1,
+    alias : "o"
+  }
+} );
+
+print( opt.verbose, opt.output );</code></pre>
+
+<p>Getopt supports both short options (<code>-v</code>) and long options
+(<code>--verbose</code>). For full documentation see the
+<a href="http://flusspferd.org/docs/getopt.html">Getopt API docs</a>.</p>
+
+<p class="note">There's a <a href="http://redmine.flusspferd.org/issues/show/169">bug
+in getopt</a> at the moment which makes aliases pretty useless, but you can
+work around it with something like <code>opt.verbose = opt.verbose ||
+opt.v;</code></p>
+
+<h2>Exit statuses</h2>
+
+<p>You can use <code>quit()</code> to exit your script. It takes a single,
+optional, argument which will be used as the exit status. This allows you to
+write well-behaving scripts which can work with exiting tools that look at exit
+status to determine if everything went ok (build systems like Maven for
+example).</p>
+
+</div>
+
+<script src="http://www.google-analytics.com/ga.js" type="text/javascript"></script>
+<script type="text/javascript">
+  try {
+  var pageTracker = _gat._getTracker("UA-11222885-1");
+  pageTracker._trackPageview();
+  } catch(err) {}
+</script>
+
+</body>
+</html>
