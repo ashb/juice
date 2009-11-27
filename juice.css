@@ -78,11 +78,13 @@ pre {
   margin-right: 20px;
   padding: 10px;
 }
+
 ins {
   background: #d8fcce;
   color: green;
   text-decoration: none;
 }
+
 p.note {
   border-left: 5px solid #d11;
   padding-left: 5px;
@@ -99,6 +101,15 @@ a:hover {
 }
 
 h3 {
+  color: #000;
+  font-weight: bold;
+}
+
+em {
+  font-weight: bold;
+}
+
+strong {
   color: #000;
   font-weight: bold;
 }
