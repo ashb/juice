@@ -1,0 +1,89 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+  "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <title>Using the http-fetch module</title>
+  <link rel="stylesheet" type="text/css" href="../juice.css">
+</head>
+<body>
+
+<div id="logo">Juice</div>
+
+<div id="content">
+
+<h1>Fetching and parsing remote files</h1>
+
+<p>The http-fetch module allows you to make HTTP requests and get back the
+contents of the response. It has a basic method which you can use to manually
+do everything (request type, headers, data, response type) and some convenience
+wrappers to simplify common use-cases.</p>
+
+<h2>The basics</h2>
+
+<p>The most basic method available is <code>request</code>. This allows to
+completely manually set up your request:</p>
+
+<pre><code>const http = require( "http-fetch" );
+http.request( "GET", "http://google.com/" );</code></pre>
+
+<h3>Sending data and custom headers</h3>
+
+<h2>Dealing with JSON</h2>
+
+<p>The wrappers <code>getJSON</code> and <code>postJSON</code> both set the
+HTTP Accept header to include "application/json" and use
+<code>JSON.parse</code> on the response before returning it to you:</p>
+
+<pre><code>const http = require( "http-fetch" );
+
+// the blank callback stops Flickr returning JSONP
+var url = "http://flickr.com/interesting.json?callback=";
+
+var flickr = http.getJSON( url );
+print( flickr.toSource() );</code></pre>
+
+<p class="note">Dealing with poorly formed JSON is annoying. The default parser
+will only accept strictly compliant JSON and dies without useful errors.
+Writing a better (more permissive and programmer friendly) JSON parser is on
+our todo list, but until then you can try to work around the problem by using
+<code>eval</code> (on trusted sources only!) and/or cleaning up the data before
+parsing it.</p>
+
+<h2>Fetching HTML and XML</h2>
+
+<p>The wrappers <code>getHTML</code> and <code>getXML</code> both return a
+Document Object Model. The difference between them is that <code>getHTML</code>
+only processes HTML but can handle tag soup to some degree, whereas
+<code>getXML</code> can process any XML but fails if it isn't well formed.</p>
+
+<h3>Working with the DOM</h3>
+
+<p>The DOM returned is fully compliant, so you can use all the regular DOM
+traversal techniques on it like <code>getElementById</code>,
+<code>childNodes</code> and <code>parentNode</code>. It also uses
+<a href="http://sizzlejs.com/">Sizzle</a> to provide a working
+<code>querySelectorAll</code> to allow use of CSS3 selectors.</p>
+
+<h2>What's missing?</h2>
+
+<h3>Asynchronous requests</h3>
+
+<p>Remote HTTP requests can be slow, and if your script makes lots of them it's
+pretty sub-optimal to have every single request blocking. We plan to include an
+event loop for v0.3 which will allow us to take an optional callback for all of
+the http-fetch methods. If provided the request will be asynchronous and the
+callback will be invoked when it's finished. If not, it'll be blocking and the
+contents will be provided via the return value.</p>
+
+</div>
+
+<script src="http://www.google-analytics.com/ga.js" type="text/javascript"></script>
+<script type="text/javascript">
+  try {
+  var pageTracker = _gat._getTracker("UA-11222885-1");
+  pageTracker._trackPageview();
+  } catch(err) {}
+</script>
+
+</body>
+</html>
