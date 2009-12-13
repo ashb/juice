@@ -129,5 +129,114 @@ exports.test_RenderTemplateNotFound = function() {
   );
 }
 
+exports.test_RenderTemplateEngineNotFound = function() {
+  var rawTemplate = "raw-template",
+      stash = { key : "value" },
+      renderedTemplate = "rendered-template";
+
+  var file = new Mock( {
+    readWhole : { returns : rawTemplate }
+  } );
+
+  var fs = new Mock( {
+    isFile : {
+      interface : {
+        accepts : [ "templates/index.tt" ],
+        returns : true
+      }
+    },
+    rawOpen : {
+      interface : {
+        accepts : [ "templates/index.tt", "r" ],
+        returns : file
+      }
+    }
+  } );
+
+  // Flusspferd specific
+  require.module_cache[ 'fs-base' ] = fs;
+
+  var app = new Mock( {
+    config : {
+      interface : {
+        accepts : [ "templates" ],
+        returns : { "tt" : "Template" }
+      }
+    },
+    docRoot : { value : "" }
+  } );
+
+  // Flusspferd specific
+  delete require.module_cache[ 'Template' ];
+  require.preload[ "Template" ] = function() { throw "Module not found"; }
+
+  asserts.throws(
+    function() { Context.prototype.renderTemplate.call( app, "index", stash ) },
+    "Should throw an error if the rendering engine doesn't exist"
+  );
+}
+
+exports.test_RenderTemplateOrder = function() {
+  var rawTemplate = "raw-template",
+      stash = { key : "value" },
+      renderedTemplate = "rendered-template";
+
+  var file = new Mock( {
+    readWhole : { returns : rawTemplate }
+  } );
+
+  var fs = new Mock( {
+    isFile : {
+      interface : [ {
+        accepts : [ "templates/index.tt" ],
+        returns : false
+      }, {
+        accepts : [ "templates/index.haml" ],
+        returns : true
+      } ]
+    },
+    rawOpen : {
+      interface : {
+        accepts : [ "templates/index.haml", "r" ],
+        returns : file
+      }
+    }
+  } );
+
+  // Flusspferd specific
+  require.module_cache[ 'fs-base' ] = fs;
+
+  var app = new Mock( {
+    config : {
+      interface : {
+        accepts : [ "templates" ],
+        returns : {
+          "tt" : "Template",
+          "haml" : "haml"
+        }
+      }
+    },
+    docRoot : { value : "" }
+  } );
+
+  var haml = new Mock( {
+    render : {
+      interface : {
+        accepts : [ rawTemplate, stash ],
+        returns : renderedTemplate
+      }
+    }
+  } );
+
+  // Flusspferd specific
+  require.module_cache[ 'haml' ] = haml;
+
+  asserts.same(
+    Context.prototype.renderTemplate.call( app, "index", stash ),
+    renderedTemplate,
+    "Should try the next option if the first doesn't exist"
+  );
+}
+
 if (require.main == module)
   test.runner(exports);
