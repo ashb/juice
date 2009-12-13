@@ -29,40 +29,50 @@ asserts.throws = function( testcase, expected, message ) {
 if (!this.exports) this.exports = {};
 
 exports.test_RenderTemplateDefault = function() {
-  var rawTemplate = "foo",
-      stash = { foo : "bar" },
-      renderedTemplate = "bar";
+  var rawTemplate = "raw-template",
+      stash = { key : "value" },
+      renderedTemplate = "rendered-template";
 
-  var file = new Mock();
-  file.expects()
-    .method( "readWhole" )
-    .andReturn( rawTemplate );
+  var file = new Mock( {
+    readWhole : { returns : rawTemplate }
+  } );
 
-  var fs = new Mock();
-  fs.expects()
-    .method( "isFile" )
-    .withArguments( "templates/index.tt" )
-    .andReturn( true );
-  fs.expects()
-    .method( "rawOpen" )
-    .withArguments( "templates/index.tt" )
-    .andReturn( file );
+  var fs = new Mock( {
+    isFile : {
+      interface : {
+        accepts : [ "templates/index.tt" ],
+        returns : true
+      }
+    },
+    rawOpen : {
+      interface : {
+        accepts : [ "templates/index.tt", "r" ],
+        returns : file
+      }
+    }
+  } );
 
   // Flusspferd specific
-  require.module_cache[ 'filesystem-base' ] = fs;
+  require.module_cache[ 'fs-base' ] = fs;
 
-  var app = new Mock();
-  app.expects()
-    .method( "config" )
-    .withArguments( "templates" )
-    .andReturn( undefined );
-  app.docRoot = "";
+  var app = new Mock( {
+    config : {
+      interface : {
+        accepts : [ "templates" ],
+        returns : undefined
+      }
+    },
+    docRoot : { value : "" }
+  } );
 
-  var tt = new Mock();
-  tt.expects()
-    .method( "render" )
-    .withArguments( rawTemplate, stash )
-    .andReturn( renderedTemplate );
+  var tt = new Mock( {
+    render : {
+      interface : {
+        accepts : [ rawTemplate, stash ],
+        returns : renderedTemplate
+      }
+    }
+  } );
 
   // Flusspferd specific
   require.module_cache[ 'Template' ] = tt;
@@ -75,31 +85,40 @@ exports.test_RenderTemplateDefault = function() {
 }
 
 exports.test_RenderTemplateNotFound = function() {
-  var rawTemplate = "foo",
-      stash = { foo : "bar" },
-      renderedTemplate = "bar";
+  var rawTemplate = "raw-template",
+      stash = { key : "value" },
+      renderedTemplate = "rendered-template";
 
-  var fs = new Mock();
-  fs.expects()
-    .method( "isFile" )
-    .withArguments( "templates/index.tt" )
-    .andReturn( false );
+  var fs = new Mock( {
+    isFile : {
+      interface : {
+        accepts : [ "templates/index.tt" ],
+        returns : false
+      }
+    }
+  } );
 
   // Flusspferd specific
-  require.module_cache[ 'filesystem-base' ] = fs;
+  require.module_cache[ 'fs-base' ] = fs;
 
-  var app = new Mock();
-  app.expects()
-    .method( "config" )
-    .withArguments( "templates" )
-    .andReturn( { "tt" : "Template" } );
-  app.docRoot = "";
+  var app = new Mock( {
+    config : {
+      interface : {
+        accepts : [ "templates" ],
+        returns : { "tt" : "Template" }
+      }
+    },
+    docRoot : { value : "" }
+  } );
 
-  var tt = new Mock();
-  tt.expects()
-    .method( "render" )
-    .withArguments( rawTemplate, stash )
-    .andReturn( renderedTemplate );
+  var tt = new Mock( {
+    render : {
+      interface : {
+        accepts : [ rawTemplate, stash ],
+        returns : renderedTemplate
+      }
+    }
+  } );
 
   // Flusspferd specific
   require.module_cache[ 'Template' ] = tt;
