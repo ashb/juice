@@ -11,7 +11,7 @@ exports.makeScript = function () {
 
 var path = installer.dirName(module.id);
 
-io.File.create( path + '../bin/juice', 0777);
+io.File.create( path + '../bin/juice', parseInt( "0777", 8 ) );
 var fh = fs.rawOpen( path + '../bin/juice', 'w');
 
 fh.write(<><![CDATA[#!/usr/bin/env flusspferd
@@ -58,7 +58,7 @@ for each (f in files) {
   if (f.match("^script/")) {
     // since our fs-base doesn't yet support permissions, we need to use io.File to
     // make it executable first
-    fh.write('    io.File.create( dir + "' + f + '", 0777 );\n')
+    fh.write('    io.File.create( dir + "' + f + '", parseInt( "0777", 8 ) );\n')
     fh.write('    if (installer.batchFilesNeeded)\n' + 
              '      fs.rawOpen(dir + "' + f + '.bat", "w").print(installer.batchFile);\n\n');
 
