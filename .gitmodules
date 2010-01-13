@@ -1,0 +1,3 @@
+[submodule "vendor/qmock"]
+	path = vendor/qmock
+	url = git://github.com/andybeeching/qmock.git
