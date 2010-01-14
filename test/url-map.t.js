@@ -80,7 +80,6 @@ exports.test_static_action = setup(function test( app ) {
       act = { static: "bar" },
       ret = { return: "value" };
 
-  // Who named that method <_< TODO: rename it to something not shit.
   app.expects(1).method("buildStaticAction")
                 .interface( { accepts: [act, url], returns: ret } );
 
