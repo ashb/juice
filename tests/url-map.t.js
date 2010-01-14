@@ -20,6 +20,7 @@ exports.test_inline_action = setup(function(app) {
   var cb = function() { },
       res = app.buildAction( "/foo", cb );
 
+  // TODO: rename this to res.controller
   asserts.same(res.action, cb, "action correct for literal function '/foo'")
   asserts.same(res.__matcher, /^\/foo$/, "action's matcher correct");
   // TODO: rename this to template or default_template
@@ -37,6 +38,9 @@ exports.test_named_action = setup(function(app) {
 
   // The qmock API is a little bit batty. Or lacking docks. one or the other
   // You cant throw an error from a mocked method it seems.
+
+  // TODO: Rename getAction (in application.js) to just 'controller()' and
+  //       remove the first argument to it
   var getController = app.expects().method("getAction");
   getController.expectedArgs = [
     { accepts: [{}, "foo"], returns: foo_cb },
@@ -52,6 +56,20 @@ exports.test_named_action = setup(function(app) {
   asserts.same(res.action, foo_bar_cb, "action correct")
   asserts.same(res.__matcher, /^\/foo\/bar\/\d$/, "action's matcher correct");
   asserts.same(res.render, "foo/bar", "action template inferred");
+})
+
+exports.test_custom_matcher = setup(function(app) {
+  var cb = function() { },
+      m = function() { return false };
+
+  var res = app.buildAction( "/foo", { action: cb, __matcher: m } );
+
+  asserts.same(res.__matcher, m, "action's custom matcher preserved");
+
+  asserts.throwsOk(
+    function() { app.buildAction( "/foo", { action: cb, __matcher: "not a func" } ) },
+    "TypeError: action.__matcher is not a function",
+    "__matcher must be a function");
 })
 
 if (require.main == module)
