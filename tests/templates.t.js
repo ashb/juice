@@ -1,7 +1,8 @@
 let test = require('test'),
     asserts = test.asserts,
     Context = require('../lib/juice/context').Context,
-    Mock = require('qmock').Mocks;
+    qmock = require('./lib/qmock'),
+    Mock = qmock.Mocks;
 
 // simple wrapper for testing throws
 asserts.throws = function( testcase, expected, message ) {
@@ -37,7 +38,7 @@ exports.test_RenderTemplateDefault = function() {
     readWhole : { returns : rawTemplate }
   } );
 
-  var fs = new Mock( {
+  qmock.mockModule( 'fs-base', {
     isFile : {
       interface : {
         accepts : [ "templates/index.tt" ],
@@ -52,9 +53,6 @@ exports.test_RenderTemplateDefault = function() {
     }
   } );
 
-  // Flusspferd specific
-  require.module_cache[ 'fs-base' ] = fs;
-
   var app = new Mock( {
     config : {
       interface : {
@@ -65,7 +63,7 @@ exports.test_RenderTemplateDefault = function() {
     docRoot : { value : "" }
   } );
 
-  var tt = new Mock( {
+  qmock.mockModule( 'Template', {
     render : {
       interface : {
         accepts : [ rawTemplate, stash ],
@@ -73,9 +71,6 @@ exports.test_RenderTemplateDefault = function() {
       }
     }
   } );
-
-  // Flusspferd specific
-  require.module_cache[ 'Template' ] = tt;
 
   asserts.same(
     Context.prototype.renderTemplate.call( app, "index", stash ),
@@ -185,7 +180,7 @@ exports.test_RenderTemplateOrder = function() {
     readWhole : { returns : rawTemplate }
   } );
 
-  var fs = new Mock( {
+  qmock.mockModule( 'fs-base', {
     isFile : {
       interface : [ {
         accepts : [ "templates/index.tt" ],
@@ -203,9 +198,6 @@ exports.test_RenderTemplateOrder = function() {
     }
   } );
 
-  // Flusspferd specific
-  require.module_cache[ 'fs-base' ] = fs;
-
   var app = new Mock( {
     config : {
       interface : {
@@ -219,7 +211,8 @@ exports.test_RenderTemplateOrder = function() {
     docRoot : { value : "" }
   } );
 
-  var haml = new Mock( {
+
+  var haml = qmock.mockModule( 'haml', {
     render : {
       interface : {
         accepts : [ rawTemplate, stash ],
@@ -227,9 +220,6 @@ exports.test_RenderTemplateOrder = function() {
       }
     }
   } );
-
-  // Flusspferd specific
-  require.module_cache[ 'haml' ] = haml;
 
   asserts.same(
     Context.prototype.renderTemplate.call( app, "index", stash ),

@@ -26,3 +26,18 @@ function no_submodule() {
   );
   throw "qmock submodule not found!";
 }
+
+// Flusspferd specific - mock up a module
+exports.mockModule = function(module, api) {
+  var mock = new exports.Mocks( api );
+
+  var cache;
+  // TODO: Maybe we should change the exports in place if its already loaded?
+  if ( "exports" in require.module_cache.flusspferd )
+       cache = { exports: mock };
+  else cache = mock;
+
+  require.module_cache[ module ] = cache;
+
+  return mock;
+}
