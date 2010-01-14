@@ -1,7 +1,7 @@
 let test = require('test'),
     asserts = test.asserts,
     Context = require('../lib/juice/context').Context,
-    Mock = require('qmock').Mock;
+    Mock = require('qmock').Mocks;
 
 // simple wrapper for testing throws
 asserts.throws = function( testcase, expected, message ) {
