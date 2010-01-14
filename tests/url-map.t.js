@@ -6,13 +6,15 @@ const test = require('test'),
 // TEST:
 //   Check that buildAction behaves as expected for various different cases
 
+var app
 function setup(test) {
-  var app = qmock.Mocks();
-  App.call(app);
-  app.buildAction = App.prototype.buildAction;
-
   return function() {
-    return test(app) ;
+    app = qmock.Mocks();
+    var App = require('juice').Application;
+    // Call the constructor on the mock to setup member variables
+    App.call(app);
+    app.buildAction = App.prototype.buildAction;
+    return test(app);
   }
 }
 
@@ -70,6 +72,36 @@ exports.test_custom_matcher = setup(function(app) {
     function() { app.buildAction( "/foo", { action: cb, __matcher: "not a func" } ) },
     "TypeError: action.__matcher is not a function",
     "__matcher must be a function");
+})
+
+exports.test_static_action = setup(function test( app ) {
+  var url = "/foo",
+      act = { static: "bar" },
+      ret = { return: "value" };
+
+  // Who named that method <_< TODO: rename it to something not shit.
+  app.expects(1).method("buildServeStaticAction")
+                .interface( { accepts: [act, url], returns: ret } );
+
+  var res = app.buildAction( "/foo", { static: "bar" } );
+
+  asserts.ok(app.verify(), "static action built ok");
+  asserts.same(res, ret, "... and returned");
+
+})
+
+exports.test_subapp_action = setup(function test( app ) {
+  var url = "/foo",
+      act = { app: "bar" },
+      ret = { return: "value" };
+
+  app.expects(1).method("buildSubappAction")
+                .interface( { accepts: [act, url], returns: ret } );
+
+  var res = app.buildAction( "/foo", { app: "bar" } );
+
+  asserts.ok(app.verify(), "subapp action built ok");
+  asserts.same(res, ret, "... and returned");
 })
 
 if (require.main == module)
