@@ -41,13 +41,12 @@ exports.test_named_action = setup(function(app) {
   // The qmock API is a little bit batty. Or lacking docks. one or the other
   // You cant throw an error from a mocked method it seems.
 
-  // TODO: Rename getAction (in application.js) to just 'controller()' and
-  //       remove the first argument to it
-  var getController = app.expects().method("getAction");
-  getController.expectedArgs = [
-    { accepts: [{}, "foo"], returns: foo_cb },
-    { accepts: [{}, "foo.bar"], returns: foo_bar_cb }
-  ];
+  app.expects(2)
+     .method("controller")
+     .interface(
+    { accepts: ["foo"], returns: foo_cb },
+    { accepts: ["foo.bar"], returns: foo_bar_cb }
+  );
 
   var res = app.buildAction("/foo", "foo");
   asserts.same(res.action, foo_cb, "action correct '/foo'")
@@ -58,6 +57,8 @@ exports.test_named_action = setup(function(app) {
   asserts.same(res.action, foo_bar_cb, "action correct")
   asserts.same(res.__matcher, /^\/foo\/bar\/\d$/, "action's matcher correct");
   asserts.same(res.render, "foo/bar", "action template inferred");
+
+  qmock.verifyOk( app );
 })
 
 exports.test_custom_matcher = setup(function(app) {
@@ -85,7 +86,7 @@ exports.test_static_action = setup(function test( app ) {
 
   var res = app.buildAction( "/foo", { static: "bar" } );
 
-  asserts.ok(app.verify(), "static action built ok");
+  qmock.verifyOk( app, "static action built ok" );
   asserts.same(res, ret, "... and returned");
 
 })
@@ -100,7 +101,7 @@ exports.test_subapp_action = setup(function test( app ) {
 
   var res = app.buildAction( "/foo", { app: "bar" } );
 
-  asserts.ok(app.verify(), "subapp action built ok");
+  qmock.verifyOk( app, "subapp action built ok" );
   asserts.same(res, ret, "... and returned");
 })
 

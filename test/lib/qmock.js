@@ -41,3 +41,17 @@ exports.mockModule = function(module, api) {
 
   return mock;
 }
+
+exports.verifyOk = function( mock, msg ) {
+  const asserts = require('test').asserts;
+
+  try {
+    mock.verify();
+    asserts.ok(true, msg || "mocked ok");
+  }
+  catch (e) {
+    asserts.ok(false, msg || "mocked ok");
+    asserts.diag( uneval( e ) );
+  }
+
+}
