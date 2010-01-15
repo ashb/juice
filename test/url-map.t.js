@@ -9,7 +9,7 @@ const test = require('test'),
 var app
 function setup(test) {
   return function() {
-    app = qmock.Mocks();
+    app = qmock.Mock();
     var App = require('juice').Application;
     // Call the constructor on the mock to setup member variables
     App.call(app);

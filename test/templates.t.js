@@ -2,7 +2,7 @@ let test = require('test'),
     asserts = test.asserts,
     Context = require('../lib/juice/context').Context,
     qmock = require('./lib/qmock'),
-    Mock = qmock.Mocks;
+    Mock = qmock.Mock;
 
 // simple wrapper for testing throws
 asserts.throws = function( testcase, expected, message ) {
