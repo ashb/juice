@@ -6,10 +6,9 @@ const test = require('test'),
 // TEST:
 //   Check that buildAction behaves as expected for various different cases
 
-var app
 function setup(test) {
   return function() {
-    app = qmock.Mock();
+    var app = qmock.Mock();
     var App = require('juice').Application;
     // Call the constructor on the mock to setup member variables
     App.call(app);
