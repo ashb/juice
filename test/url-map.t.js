@@ -11,7 +11,7 @@ function setup(test) {
     var app = qmock.Mock();
     var App = require('juice').Application;
     // Call the constructor on the mock to setup member variables
-    App.call(app);
+    App.call(app, module);
     app.buildAction = App.prototype.buildAction;
     return test(app);
   }

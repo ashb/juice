@@ -1,8 +1,7 @@
 // Don't mess these first few lines
-const juice = require('juice'),
-      DOC_ROOT = module.uri.replace(/^.*?:\/\/(.*?)lib\/app\.js$/, "$1") || "./";
+const juice = require('juice');
 
-var app = new juice.Application;
+var app = new juice.Application(module);
 
 
 // Your actions (well, just one action for now)
@@ -21,5 +20,6 @@ app.urls = {
 };
 
 // Don't mess with this, either
-exports.app = app.setup( DOC_ROOT );
+exports.app = app.jsgify( );
+exports.juice = app;
 

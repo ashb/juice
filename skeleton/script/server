@@ -1,15 +1,25 @@
 #!/usr/bin/env flusspferd
 // -*- mode:javascript; -*- vim:filetype=javascript:enc=utf-8:
 
-var args = require('system').args;
-var app, baseModules;
+var args = require('system').args,
+    zest = require('zest'),
+    app,
+    baseModules = {};
 
 if (args[1] != '--no-reload') {
   print("Running skeleton in reloader mode...");
+
+  // Flusspferd specific
+  for (i in require.module_cache)
+    baseModules[i] = true;
+
   app = function(request) {
     // Flusspferd specific - unload modules on request
+    // But only those modules loaded after the initial startup
     for (i in require.module_cache) {
-      delete require.module_cache[i];
+      if (i in baseModules == false) {
+        delete require.module_cache[i];
+      }
     }
     gc();
 
@@ -21,7 +31,9 @@ else {
   app = require( '../lib/app' ).app
 }
 
-var server = require( 'zest' ).Zest( {
+// TODO: Do we want to call setup once here?
+
+var server = zest.Zest( {
   handler: app
 } );
 
