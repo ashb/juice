@@ -5,7 +5,7 @@ exports.install = function() {
 
   // Make sure the bin/juice is up to date
   require('./skeleton/build-juice-script').makeScript();
-  require('./lib/juice/installer').install(module.id)
+  require('./lib/juice/installer').install()
 }
 
 if (require.main === module)
