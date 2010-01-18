@@ -93,3 +93,21 @@ exports.verifyOk = function( mock, msg ) {
   }
 
 }
+
+// Call with the module object of the test, and with the names of functions you
+// wish copied from the App prototype:
+//
+//     var app = mock_app( module, "loadConfig" )
+//
+exports.mock_app = function( module ) {
+  var app = qmock.Mock();
+  var App = require('juice').Application;
+  // Call the constructor on the mock to setup member variables
+  App.call(app, module);
+
+  // Copy methods we want to test from the prototype
+  for (var i = 1; i < arguments.length; i++) {
+    app[ arguments[ i ] ] = App.prototype[ arguments[ i ] ];
+  }
+  return app;
+}

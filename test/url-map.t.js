@@ -8,10 +8,7 @@ const test = require('test'),
 
 function setup(test) {
   return function() {
-    var app = qmock.Mock();
-    var App = require('juice').Application;
-    // Call the constructor on the mock to setup member variables
-    App.call(app, module);
+    var app = qmock.mock_app( module );
     app.buildAction = App.prototype.buildAction;
     return test(app);
   }
