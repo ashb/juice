@@ -29,7 +29,12 @@ function no_submodule() {
 
 // Flusspferd specific - mock up a module
 exports.mockModule = function(module, api) {
-  var mock = new exports.Mock( api );
+  var mock;
+
+  if (typeof api == "function")
+    mock = api; // Already mock object. probably.
+  else
+    mock = new exports.Mock( api );
 
   var cache;
   // TODO: Maybe we should change the exports in place if its already loaded?
