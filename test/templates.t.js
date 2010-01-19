@@ -4,229 +4,139 @@ let test = require('test'),
     qmock = require('./lib/qmock'),
     Mock = qmock.Mock;
 
-// simple wrapper for testing throws
-asserts.throws = function( testcase, expected, message ) {
-  if ( message == undefined ) {
-    message = expected;
-    expected = undefined;
-  }
-  try {
-    testcase();
-    asserts.ok( 0, message );
-    asserts.diag( "No error thrown" );
-  }
-  catch ( e ) {
-    if ( expected === undefined || expected == e.toString() ) {
-      asserts.ok( 1, message );
+
+function mock_view( app, opts ) {
+  var tmpl = new Mock( {
+    render : {
+      calls: 1,
+      interface : [
+        { accepts : [
+            opts.input || "raw-template",
+            opts.stash || { key: "value" }
+          ],
+          returns : opts.returns || "rendered-template"
+        }
+      ]
     }
-    else {
-      asserts.ok( 0, message );
-      asserts.diag( "   Got: " + e.toString() );
-      asserts.diag( "Wanted: " + expected );
-    }
-  }
+  } );
+
+  tmpl.accepts( Object );
+
+  app.expects(1)
+     .method("loadRelativeComponent")
+     .interface({
+        accepts: [ "./view/" + opts.name ],
+        returns: { View: tmpl }
+      });
+  return tmpl;
 }
 
-if (!this.exports) this.exports = {};
-
-exports.test_RenderTemplateDefault = function() {
+exports.test_RenderTemplateDefault = qmock.mockForTest(
+function mock() {
+  qmock.mockModule( 'fs-base',
+    require( './lib/fs-mock' ).mock( {
+      "templates/index.tt": "raw-template"
+    } )
+  );
+},
+function test() {
   var rawTemplate = "raw-template",
       stash = { key : "value" },
       renderedTemplate = "rendered-template";
 
-  var file = new Mock( {
-    readWhole : { returns : rawTemplate }
-  } );
-
-  qmock.mockModule( 'fs-base', {
-    isFile : {
-      interface : {
-        accepts : [ "templates/index.tt" ],
-        returns : true
-      }
-    },
-    rawOpen : {
-      interface : {
-        accepts : [ "templates/index.tt", "r" ],
-        returns : file
-      }
-    }
-  } );
-
-  var app = new Mock( {
-    config : {
-      interface : {
-        accepts : [ "templates" ],
-        returns : undefined
-      }
-    },
-    docRoot : { value : "" }
-  } );
-
-  qmock.mockModule( 'Template', {
-    render : {
-      interface : {
-        accepts : [ rawTemplate, stash ],
-        returns : renderedTemplate
-      }
-    }
-  } );
+  var app = qmock.mock_app( module );
+  app.docRoot = "";
+  app.config = { }
+  app.templatePath = [ 'templates/' ];
+  var tt = mock_view( app, { name: "tt" } );
 
   asserts.same(
     Context.prototype.renderTemplate.call( app, "index", stash ),
-    renderedTemplate,
+    "rendered-template",
     "Should default to .tt when there's no conf"
   );
-}
 
-exports.test_RenderTemplateNotFound = function() {
+  qmock.verifyOk( app );
+  qmock.verifyOk( tt );
+} );
+
+exports.test_RenderTemplateNotFound = qmock.mockForTest(
+function mock() {
+  // Mock empty fs
+  qmock.mockModule( 'fs-base',
+    require( './lib/fs-mock' ).mock( { } )
+  );
+},
+function test() {
   var rawTemplate = "raw-template",
       stash = { key : "value" },
       renderedTemplate = "rendered-template";
 
-  var fs = new Mock( {
-    isFile : {
-      interface : {
-        accepts : [ "templates/index.tt" ],
-        returns : false
-      }
-    }
-  } );
+  var app = qmock.mock_app( module );
+  app.docRoot = "";
+  app.config = {};
+  app.templatePath = [ app.docRoot + 'templates/' ];
 
-  // Flusspferd specific
-  require.module_cache[ 'fs-base' ] = fs;
-
-  var app = new Mock( {
-    config : {
-      interface : {
-        accepts : [ "templates" ],
-        returns : { "tt" : "Template" }
-      }
-    },
-    docRoot : { value : "" }
-  } );
-
-  var tt = new Mock( {
-    render : {
-      interface : {
-        accepts : [ rawTemplate, stash ],
-        returns : renderedTemplate
-      }
-    }
-  } );
-
-  // Flusspferd specific
-  require.module_cache[ 'Template' ] = tt;
-
-  asserts.throws(
+  asserts.throwsOk(
     function() { Context.prototype.renderTemplate.call( app, "index", stash ); },
     "Should throw an error if no template file exists"
   );
-}
 
-exports.test_RenderTemplateEngineNotFound = function() {
+  qmock.verifyOk( app );
+} );
+
+exports.test_RenderTemplateEngineNotFound = qmock.mockForTest(
+function mock() {
+  qmock.mockModule( 'fs-base',
+    require( './lib/fs-mock' ).mock( {
+      "templates/index.made-up": "raw-template"
+    } )
+  );
+},
+function test() {
   var rawTemplate = "raw-template",
       stash = { key : "value" },
       renderedTemplate = "rendered-template";
 
-  var file = new Mock( {
-    readWhole : { returns : rawTemplate }
-  } );
+  var app = qmock.mock_app( module );
+  app.docRoot = "";
+  app.config = { templates: { "made-up": "made-up" } };
+  app.templatePath = [ 'templates/' ];
 
-  var fs = new Mock( {
-    isFile : {
-      interface : {
-        accepts : [ "templates/index.tt" ],
-        returns : true
-      }
-    },
-    rawOpen : {
-      interface : {
-        accepts : [ "templates/index.tt", "r" ],
-        returns : file
-      }
-    }
-  } );
-
-  // Flusspferd specific
-  require.module_cache[ 'fs-base' ] = fs;
-
-  var app = new Mock( {
-    config : {
-      interface : {
-        accepts : [ "templates" ],
-        returns : { "tt" : "Template" }
-      }
-    },
-    docRoot : { value : "" }
-  } );
-
-  // Flusspferd specific
-  delete require.module_cache[ 'Template' ];
-  require.preload[ "Template" ] = function() { throw "Module not found"; }
-
-  asserts.throws(
+  asserts.throwsOk(
     function() { Context.prototype.renderTemplate.call( app, "index", stash ) },
     "Should throw an error if the rendering engine doesn't exist"
   );
-}
+} );
 
-exports.test_RenderTemplateOrder = function() {
-  var rawTemplate = "raw-template",
-      stash = { key : "value" },
+exports.test_RenderTemplateOrder = qmock.mockForTest(
+function mock() {
+  qmock.mockModule( 'fs-base',
+    require( './lib/fs-mock' ).mock( {
+      "templates/index.haml": "raw-template"
+    } )
+  );
+},
+function test() {
+  var stash = { key : "value" },
       renderedTemplate = "rendered-template";
 
-  var file = new Mock( {
-    readWhole : { returns : rawTemplate }
-  } );
+  var app = qmock.mock_app( module );
+  app.docRoot = "";
+  app.config = { templates: { tt: "tt", haml: "haml" } };
+  app.templatePath = [ app.docRoot + 'templates/' ];
 
-  qmock.mockModule( 'fs-base', {
-    isFile : {
-      interface : [ {
-        accepts : [ "templates/index.tt" ],
-        returns : false
-      }, {
-        accepts : [ "templates/index.haml" ],
-        returns : true
-      } ]
-    },
-    rawOpen : {
-      interface : {
-        accepts : [ "templates/index.haml", "r" ],
-        returns : file
-      }
-    }
-  } );
-
-  var app = new Mock( {
-    config : {
-      interface : {
-        accepts : [ "templates" ],
-        returns : {
-          "tt" : "Template",
-          "haml" : "haml"
-        }
-      }
-    },
-    docRoot : { value : "" }
-  } );
-
-
-  var haml = qmock.mockModule( 'haml', {
-    render : {
-      interface : {
-        accepts : [ rawTemplate, stash ],
-        returns : renderedTemplate
-      }
-    }
-  } );
+  var haml = mock_view( app, { name: "haml" } );
 
   asserts.same(
     Context.prototype.renderTemplate.call( app, "index", stash ),
     renderedTemplate,
     "Should try the next option if the first doesn't exist"
   );
-}
+
+  qmock.verifyOk( app, "template adaptor loaded correctly" );
+  qmock.verifyOk( haml, "template adaptor called correctly" );
+} );
 
 if (require.main == module)
   test.runner(exports);
