@@ -38,7 +38,7 @@ exports.test_json_response = test_context( function test( context ) {
   context.format = "json";
   var response = context.runAction( [], action );
 
-  asserts.same( response.body, [ json.toSource() ], "body is toSourced json" );
+  asserts.same( JSON.parse( String(response.body) ) , json, "body is toSourced json" );
   asserts.same( response.status, 200, "status defaults to 200" );
   asserts.same( response.headers.contentType, "application/json", "contentType correct" );
 } );
