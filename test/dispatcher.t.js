@@ -51,9 +51,10 @@ exports.test_action_redirect = test_context( function( context ) {
         redirect : path
       };
 
-  delete context.urlFor;
-  context.expects( 1 ).method( "urlFor" )
+  delete context.absUrlFor;
+  context.expects( 1 ).method( "absUrlFor" )
          .interface( { accepts : [ path ], returns : target } );
+
   var response = context.runAction( [], action );
 
   asserts.same( response.body, [], "body is empty" );
