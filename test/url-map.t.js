@@ -1,7 +1,7 @@
 const test = require('test'),
       asserts = test.asserts,
       App = require('juice').Application,
-      qmock = require('./lib/qmock');
+      qmock = require('./lib/juice-test');
 
 // TEST:
 //   Check that buildAction behaves as expected for various different cases

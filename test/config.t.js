@@ -1,6 +1,6 @@
 const test = require('test'),
       asserts = test.asserts,
-      qmock = require('./lib/qmock');
+      qmock = require('./lib/juice-test');
 
 function setup(test) {
   return function() {

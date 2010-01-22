@@ -1,7 +1,7 @@
 const test = require('test'),
       asserts = test.asserts,
       Context = require('juice').Context,
-      qmock = require('./lib/qmock');
+      qmock = require('./lib/juice-test');
 
 // TEST:
 //   Check the dispatcher works as intended

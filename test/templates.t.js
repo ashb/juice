@@ -1,7 +1,7 @@
 let test = require('test'),
     asserts = test.asserts,
     Context = require('../lib/juice/context').Context,
-    qmock = require('./lib/qmock'),
+    qmock = require('./lib/juice-test'),
     Mock = qmock.Mock;
 
 
