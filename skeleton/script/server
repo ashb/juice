@@ -1,41 +1,69 @@
 #!/usr/bin/env flusspferd
 // -*- mode:javascript; -*- vim:filetype=javascript:enc=utf-8:
 
-var args = require('system').args,
-    zest = require('zest'),
-    app,
-    baseModules = {};
+exports.run = function( args ) {
+  var zest = require('zest'),
+      app;
 
-if (args[1] != '--no-reload') {
-  print("Running skeleton in reloader mode...");
+  args = require('getopt').getopt({
+    'no-reload': { },
+    'port': {
+      argument: "required",
+      argument_type: "integer",
+      alias: "p"
+    }
+  }, args );
 
-  // Flusspferd specific
+  var port = Number(args.port) || 3000;
+
+  if ( ! args[ 'no-reload' ] ) {
+    print("Running skeleton in reloader mode...");
+
+    app = init_reloader( '../lib/app' );
+  }
+  else {
+    print("Running skeleton in normal mode...");
+    app = require( '../lib/app' ).app
+  }
+
+  // TODO: Do we want to call setup once here?
+
+  var server = zest.Zest( {
+    handler: app,
+    port: port
+  } );
+
+  server.start();
+}
+
+
+// Flusspferd specific - unload modules on request
+// But only those modules loaded after the initial startup
+function init_reloader( app_module ) {
+  var base_modules = [];
+
   for (i in require.module_cache)
-    baseModules[i] = true;
+    base_modules[i] = true;
 
-  app = function(request) {
-    // Flusspferd specific - unload modules on request
-    // But only those modules loaded after the initial startup
+  return function(request) {
     for (i in require.module_cache) {
-      if (i in baseModules == false) {
+      if (i in base_modules == false) {
         delete require.module_cache[i];
       }
     }
     gc();
 
-    return require('../lib/app').app(request);
+    return require( app_module ).app(request);
   }
 }
-else {
-  print("Running skeleton normal mode...");
-  app = require( '../lib/app' ).app
+
+exports.script_version = 1;
+
+if (require.main === module ) {
+  exports.run( require('system').args.slice( 1 ) );
 }
 
-// TODO: Do we want to call setup once here?
-
-var server = zest.Zest( {
-  handler: app
-} );
-
-server.start();
+// TODO: make this work to detect changes to `juice update-scripts` can check
+// for local changes
+// exports.md5 = "@hex@"
 
