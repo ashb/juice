@@ -88,3 +88,33 @@ exports.mock_app = function( module ) {
   }
   return app;
 }
+
+
+exports.test_context = function test_context(req, test) {
+  if ( arguments.length == 1 && req instanceof Function ) {
+    test = req;
+    req = {};
+  }
+
+  // Sane defaults
+  if ( "host" in req == false ) req.host = "localhost";
+  if ( "port" in req == false ) req.post = "3000";
+  if ( "scriptName" in req == false ) req.scriptName = "";
+  if ( "pathInfo" in req == false ) req.pathInfo = "";
+  if ( "headers" in req == false ) req.headers = [];
+  if ( "scheme" in req == false ) req.scheme = "http";
+
+  return function() {
+    var app = exports.mock_app( module );
+
+    var Ctx = require('juice').Context;
+
+    // Call the constructors on the mock to setup member variables
+    var ctx = new Ctx(app, req);
+
+    //print( "has urlFor matches:", ctx.hasOwnProperty("urlFor") );
+    //ctx.urlFor;
+    //print( "urlFor matches:", ctx.urlFor === Ctx.prototype.urlFor );
+    return test(ctx);
+  }
+}
