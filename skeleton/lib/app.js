@@ -4,12 +4,21 @@ const juice = require('juice');
 var app = new juice.Application(module),
     proto = app.prototype;
 
-var Post = proto.models.Posts = function Post (ctor, args) {
+/*
+Example model:
+var DB = proto.models.DB = function( app ) {
+  this.db = new require('sqlite3').SQLite3( app.config.dbname );
 }
 
-Post.prototype.all = function() {
+DB.prototype.all = function() {
+  return this.db.query("SELECT * FROM table");
 }
 
+Then use it in a controller like:
+proto.controllers.list = function ( ) {
+  return { rows: this.models.DB.all() }
+}
+*/
 
 // Your actions (well, just one action for now)
 proto.controllers.index = function( ) {
