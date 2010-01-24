@@ -7,6 +7,16 @@ const test = require('test'),
 //   Check the dispatcher works as intended
 
 
+exports.test_action_invocant = test_context( function test( context ) {
+  var action = {
+    action : function( ) {
+      asserts.same( this, context, "action called with Juice.Context instance as invocant" );
+    },
+    raw : true
+  };
+
+  context.runAction( [], action );
+})
 
 
 exports.test_params_decoded = test_context( function test( context ) {
