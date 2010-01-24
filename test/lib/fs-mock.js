@@ -42,6 +42,16 @@ exports.mock = function mock( tree ) {
                            .required(1);
   store.mocks.exists.expectedArgs = [ { accepts: ['/'], returns: true } ];
 
+  // Cant use a mock here as i need logic to return 'right' for other values
+  mock.canonical = function canonical ( path ) {
+    path = "/" + path.replace( /^\/|\/$/g, '' );
+
+    if ( path in store.dirs )
+      return path + "/";
+    else
+      return path;
+  }
+
   mock_directories( mock, store );
   mock_files( mock, store );
 
@@ -126,7 +136,7 @@ function mock_directories( mock, store ) {
                     { accepts: [ i + "/" ], returns: store.dirs[i].list } );
 
     exists_intf.push( { accepts: [ "/" + i ], returns: true },
-                      { accepts: [ i ], returns: true },
+                      { accepts: [ "/" + i + "/" ], returns: true },
                       { accepts: [ i ], returns: true },
                       { accepts: [ i + "/" ], returns: true } );
   }

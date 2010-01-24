@@ -82,6 +82,7 @@ exports.mock_app = function( module ) {
   // Call the constructor on the mock to setup member variables
   App.call(app, module);
 
+  app.docRoot = "root/";
   // Copy methods we want to test from the prototype
   for (var i = 1; i < arguments.length; i++) {
     app[ arguments[ i ] ] = App.prototype[ arguments[ i ] ];
@@ -105,7 +106,7 @@ exports.test_context = function test_context(req, test) {
   if ( "scheme" in req == false ) req.scheme = "http";
 
   return function() {
-    var app = exports.mock_app( module );
+    var app = req.app || exports.mock_app( module );
 
     var Ctx = require('juice').Context;
 
