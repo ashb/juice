@@ -73,6 +73,27 @@ exports.test_action_redirect = test_context( function( context ) {
   qmock.verifyOk( context, "urlFor called correctly" );
 } );
 
+exports.test_response_redirect = test_context( function( context ) {
+  var path = "/foo",
+      target = "http://site.com/foo",
+      action = {
+        action : function() {
+          this.res.redirect( "/foo", 307 );
+        },
+      };
+
+  delete context.absUrlFor;
+  context.expects( 1 ).method( "absUrlFor" )
+         .interface( { accepts : [ path ], returns : target } );
+
+  var response = context.runAction( [], action );
+
+  asserts.same( response.body, [], "body is empty" );
+  asserts.same( response.status, 307, "status defaults to 307" );
+  asserts.same( response.headers.location, target );
+  qmock.verifyOk( context, "urlFor called correctly" );
+} );
+
 exports.test_no_resolution = test_context( function( context ) {
   var action = { action : function() {} };
 
