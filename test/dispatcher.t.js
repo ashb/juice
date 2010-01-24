@@ -131,5 +131,37 @@ exports.test_template_rendered = test_context( function( context ) {
                     "failure to render should throw an error" );
 } );
 
+// Test that setting this.res.template changes which one is rendered
+exports.test_template_override = test_context( function( context ) {
+  var data = { foo : 1, bar : 2 },
+      action = {
+        action : function() {
+          this.res.template = "template2.tt";
+          return data;
+        },
+        render : "template.tt"
+      },
+      output = "one two three",
+      helpers = { alpha : function() {} };
+
+  context.helpers = helpers;
+
+  delete context.renderTemplate;
+  var renderTemplate = context.expects( 1 ).method( "renderTemplate" )
+    .interface( { accepts : [ "template2.tt", data ], returns : output } );
+
+  // We don't care about anything but the template name in this test.
+  context.runAction( [], action );
+  qmock.verifyOk( context, "renderTemplate called correctly" );
+
+  // make output undefined instead - make sure its really not using action.render
+  renderTemplate.interface(
+    { accepts : [ "template2.tt", data ], returns : undefined },
+    { accepts : [ "template.tt", data ], returns : output }
+  );
+  asserts.throwsOk( function() { context.runAction( [], action ); },
+                    "failure to render should throw an error" );
+} );
+
 if (require.main == module)
   test.runner(exports);
