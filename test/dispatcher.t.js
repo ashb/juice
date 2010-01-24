@@ -9,7 +9,7 @@ const test = require('test'),
 
 exports.test_action_invocant = test_context( function test( context ) {
   var action = {
-    action : function( ) {
+    controller : function( ) {
       asserts.same( this, context, "action called with Juice.Context instance as invocant" );
     },
     raw : true
@@ -21,7 +21,7 @@ exports.test_action_invocant = test_context( function test( context ) {
 
 exports.test_params_decoded = test_context( function test( context ) {
   var action = {
-    action : function( one, two ) {
+    controller : function( one, two ) {
       asserts.same( one, "a+b", "doesn't decode +" );
       asserts.same( two, "c d", "decodes %20" );
     },
@@ -34,7 +34,7 @@ exports.test_params_decoded = test_context( function test( context ) {
 exports.test_raw_response = test_context( function test( context ) {
   var response = "foo",
       action = {
-        action : function() { return response; },
+        controller : function() { return response; },
         raw : true
       };
 
@@ -43,7 +43,7 @@ exports.test_raw_response = test_context( function test( context ) {
 
 exports.test_json_response = test_context( function test( context ) {
   var json = { foo : 1, bar : 2 },
-      action = { action : function() { return json; } };
+      action = { controller : function() { return json; } };
 
   context.format = "json";
   var response = context.runAction( [], action );
@@ -57,7 +57,7 @@ exports.test_action_redirect = test_context( function( context ) {
   var path = "/foo",
       target = "http://site.com/foo",
       action = {
-        action : function() { return "body"; },
+        controller : function() { return "body"; },
         redirect : path
       };
 
@@ -77,7 +77,7 @@ exports.test_response_redirect = test_context( function( context ) {
   var path = "/foo",
       target = "http://site.com/foo",
       action = {
-        action : function() {
+        controller : function() {
           this.res.redirect( "/foo", 307 );
         },
       };
@@ -95,7 +95,7 @@ exports.test_response_redirect = test_context( function( context ) {
 } );
 
 exports.test_no_resolution = test_context( function( context ) {
-  var action = { action : function() {} };
+  var action = { controller : function() {} };
 
   // TODO: check the error in more detail
   asserts.throwsOk( function() { context.runAction( [], action ); },
@@ -106,7 +106,7 @@ exports.test_template_rendered = test_context( function( context ) {
   var data = { foo : 1, bar : 2 },
       template = "template.tt",
       action = {
-        action : function() { return data; },
+        controller : function() { return data; },
         render : template
       },
       output = "one two three",
@@ -135,7 +135,7 @@ exports.test_template_rendered = test_context( function( context ) {
 exports.test_template_override = test_context( function( context ) {
   var data = { foo : 1, bar : 2 },
       action = {
-        action : function() {
+        controller : function() {
           this.res.template = "template2.tt";
           return data;
         },

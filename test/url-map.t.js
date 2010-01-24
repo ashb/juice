@@ -19,13 +19,13 @@ exports.test_inline_action = setup(function(app) {
       res = app.buildAction( "/foo", cb );
 
   // TODO: rename this to res.controller
-  asserts.same(res.action, cb, "action correct for literal function '/foo'")
+  asserts.same(res.controller, cb, "controller correct for literal function '/foo'")
   asserts.same(res.__matcher, /^\/foo$/, "action's matcher correct");
   // TODO: rename this to template or default_template
   asserts.same("render" in res, false, "action template not inferred for function actions");
 
-  res = app.buildAction( "/foo/bar", { action: cb } );
-  asserts.same(res.action, cb, "action correct for action hash '/foo/bar'")
+  res = app.buildAction( "/foo/bar", { controller: cb } );
+  asserts.same(res.controller, cb, "controller correct for action hash '/foo/bar'")
   asserts.same(res.__matcher, /^\/foo\/bar$/, "action's matcher correct");
   asserts.same("render" in res, false, "action template not inferred for function actions");
 })
@@ -45,12 +45,12 @@ exports.test_named_action = setup(function(app) {
   );
 
   var res = app.buildAction("/foo", "foo");
-  asserts.same(res.action, foo_cb, "action correct '/foo'")
+  asserts.same(res.controller, foo_cb, "controller correct '/foo'")
   asserts.same(res.__matcher, /^\/foo$/, "action's matcher correct");
   asserts.same(res.render, "foo", "action template inferred");
 
   var res = app.buildAction("/foo/bar/\\d", "foo.bar");
-  asserts.same(res.action, foo_bar_cb, "action correct")
+  asserts.same(res.controller, foo_bar_cb, "controller correct")
   asserts.same(res.__matcher, /^\/foo\/bar\/\d$/, "action's matcher correct");
   asserts.same(res.render, "foo/bar", "action template inferred");
 
@@ -61,12 +61,12 @@ exports.test_custom_matcher = setup(function(app) {
   var cb = function() { },
       m = function() { return false };
 
-  var res = app.buildAction( "/foo", { action: cb, __matcher: m } );
+  var res = app.buildAction( "/foo", { controller: cb, __matcher: m } );
 
   asserts.same(res.__matcher, m, "action's custom matcher preserved");
 
   asserts.throwsOk(
-    function() { app.buildAction( "/foo", { action: cb, __matcher: "not a func" } ) },
+    function() { app.buildAction( "/foo", { controller: cb, __matcher: "not a func" } ) },
     "TypeError: action.__matcher is not a function",
     "__matcher must be a function");
 })
