@@ -50,7 +50,7 @@ exports.test_json_response = test_context( function test( context ) {
 
   asserts.same( JSON.parse( String(response.body) ) , json, "body is toSourced json" );
   asserts.same( response.status, 200, "status defaults to 200" );
-  asserts.same( response.headers.contentType, "application/json", "contentType correct" );
+  asserts.same( response.headers['content-type'], "application/json", "contentType correct" );
 } );
 
 exports.test_action_redirect = test_context( function( context ) {
@@ -120,11 +120,12 @@ exports.test_template_rendered = test_context( function( context ) {
 
   var response = context.runAction( [], action );
   asserts.same( response.body, [ output ], "returns correct output" );
-  asserts.same( response.headers.contentType, "text/html", "correct content type" );
+  asserts.same( response.headers['content-type'], "text/html; charset=utf-8", "correct content type" );
   asserts.same( response.status, 200, "status defaults to 200" );
   qmock.verifyOk( context, "renderTemplate called correctly" );
   asserts.same( data.juice, helpers, "helpers inserted into data" );
 
+  context.res.reset();
   // make output undefined instead
   renderTemplate.interface( { accepts : [ template, data ], returns : undefined } );
   asserts.throwsOk( function() { context.runAction( [], action ); },
@@ -155,6 +156,7 @@ exports.test_template_override = test_context( function( context ) {
   qmock.verifyOk( context, "renderTemplate called correctly" );
 
   // make output undefined instead - make sure its really not using action.render
+  context.res.reset();
   renderTemplate.interface(
     { accepts : [ "template2.tt", data ], returns : undefined },
     { accepts : [ "template.tt", data ], returns : output }
