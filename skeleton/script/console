@@ -1,12 +1,13 @@
-#!/usr/bin/env flusspferd --interactive
+#!/usr/bin/env flusspferd
 // -*- mode:javascript; -*- vim:filetype=javascript:enc=utf-8:
+// flusspferd: --interactive
 
 var get, post
 
 // Hide the details
 (function() {
-  var app = require('../lib/app').app,
-      test = require('juice/test').test(app);
+  var MyApp = require('../lib/app').juice,
+      test = require('juice/test').test(MyApp);
 
   get = test.get;
   post = test.post;

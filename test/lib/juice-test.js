@@ -110,12 +110,13 @@ exports.test_context = function test_context(req, test) {
 
     var Ctx = require('juice').Context;
 
-    // Call the constructors on the mock to setup member variables
-    var ctx = new Ctx(app, req);
+    var ctx = new exports.Mock();
+    // this should probably be Object.create. Except its not very common yet.
+    ctx.__proto__ = Ctx.prototype;
 
-    //print( "has urlFor matches:", ctx.hasOwnProperty("urlFor") );
-    //ctx.urlFor;
-    //print( "urlFor matches:", ctx.urlFor === Ctx.prototype.urlFor );
+    // Call the constructors on the mock to setup member variables
+    Ctx.call(ctx, app, req);
+
     return test(ctx);
   }
 }
