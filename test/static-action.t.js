@@ -12,12 +12,17 @@ exports.test_build = qmock.mockForTest(
   },
   function test() {
     var app = qmock.mock_app( module, "buildStaticAction" ),
-        action = app.buildStaticAction(
-          { static: "styles" },
-          "/styles"
-        );
-    asserts.ok( action.__matcher, "Looks like an action" );
+        base = { static: "styles" },
+        action = app.buildStaticAction( base, "/styles");
+
+    asserts.same( typeof action.__matcher, "function", "Looks like an action" );
     asserts.ok( action.controller, "Looks like an action" );
+
+    // Test that changes to action dont also affect the original object (i.e.
+    // that things aren't shared between app.urls and app.actions)
+
+    action.newProp = 1;
+    asserts.ok( "newProp" in base == false, "Action not shared with URL map");
 
     // TODO: test action.controller behaviour somehow
     // TODO: test action.__matcher behaviour somehow
